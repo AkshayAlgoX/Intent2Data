@@ -2,19 +2,59 @@
 
 FastAPI runtime for `POST /v1/analyze`: research question → intent roles → module-first retrieval → cross-wave family expansion → per-role LLM selection → deterministic grounding validation → contract v1 response.
 
-## Run
+## Local Execution
 
 ```bash
-cd intent2data
-python -m venv venv && venv/bin/pip install -r backend/requirements.txt
-venv/bin/python backend/scripts/build_index.py        # optional: pre-build the 7 MB index cache (≈2 s)
-cd backend && ../venv/bin/uvicorn app.main:app --port 8000
-curl -s localhost:8000/health
-curl -s -X POST localhost:8000/v1/analyze -H 'content-type: application/json' \
-     -d '{"question":"How does lifelong religious involvement shape physical functioning in later life?"}'
+# Setup virtual environment
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r backend/requirements.txt
+
+# Pre-build index cache (optional: pre-build the 7 MB index cache in ≈2 s)
+PYTHONPATH=backend python backend/scripts/build_index.py
+
+# Run pytest suite
+PYTHONPATH=backend pytest backend/tests
+
+# Run local development server
+PYTHONPATH=backend uvicorn app.main:app --host 0.0.0.0 --port 8000
 ```
 
 Without any configuration the server uses the **offline deterministic stand-in** (`llm.live = false` in every response). It exercises the pipeline as software; it says nothing about model quality [LIVE RESULT: none].
+
+## Docker Containerization
+
+### Build Image
+```bash
+docker build -t intent2data-backend:latest .
+```
+
+### Run Container
+```bash
+docker run -d --name intent2data-api -p 8000:8000 intent2data-backend:latest
+```
+
+## Verification & API Testing
+
+### Health Check (`/health`)
+```bash
+curl -s http://localhost:8000/health
+# Expected: {"status":"ok", ...}
+```
+
+### Analysis Endpoint (`/v1/analyze`)
+```bash
+# Valid request
+curl -s -X POST http://localhost:8000/v1/analyze \
+  -H "Content-Type: application/json" \
+  -d '{"question": "How does lifelong religious involvement shape physical functioning in later life?"}'
+
+# Invalid request (missing required field)
+curl -s -o /dev/null -w "%{http_code}\n" -X POST http://localhost:8000/v1/analyze \
+  -H "Content-Type: application/json" \
+  -d '{}'
+# Expected: 422
+```
 
 ## Configuration (environment)
 
