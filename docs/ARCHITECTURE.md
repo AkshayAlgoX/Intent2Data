@@ -18,7 +18,9 @@ POST /v1/analyze {question}
   │                  → parse_selection_output → in-context / out-of-context / hallucinated
   ▼
 5. Validation        deterministic: only in-context codes survive; evidence checked as a verbatim codebook span;
-  │                  family waves attached; limitations derived (empty retrieval, no selection, truncation, …)
+  │                  family waves attached; limitations derived (empty retrieval, unmatched concept terms, no selection, truncation, …)
+  │                  each role also carries intent_coverage (terms absent from the catalog vocabulary) and an
+  │                  uncalibrated retrieval strength (top BM25 score / saturation bound) for display only
   ▼
 contract v1 response  (contracts/v1/README.md)
 ```

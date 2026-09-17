@@ -41,6 +41,28 @@ class CandidateStats(BaseModel):
     truncated: bool
 
 
+class IntentCoverage(BaseModel):
+    """Which of the role intent's concept terms exist anywhere in the codebook
+    vocabulary. Deterministic and model-independent: an unmatched term cannot
+    have influenced module retrieval, and if every distinctive term is
+    unmatched the retrieved modules were ranked on generic words only."""
+    terms: list[str]               # concept terms extracted from the intent
+    unmatched: list[str]           # terms occurring in no module document
+    coverage: float                # matched / terms (1.0 when there are no terms)
+
+
+class RetrievalSignal(BaseModel):
+    """Descriptive strength of module retrieval for this role. `strength` is
+    the best module's BM25 score divided by the score a perfect document
+    would reach for this intent (0..1). It is NOT calibrated: good and bad
+    retrievals overlap in the 0.2-0.3 range on the HRS catalog, so no
+    threshold or limitation is derived from it. Shown so a reader can compare
+    roles within one response."""
+    top_score: float
+    max_possible_score: float
+    strength: float
+
+
 class Grounding(BaseModel):
     in_context: bool               # code was in the candidate set shown to the model
     evidence_grounded: bool        # evidence string is a verbatim span of that candidate
@@ -77,6 +99,8 @@ class RoleResult(BaseModel):
     selections: list[SelectedVariable]
     rejected: Rejected
     error: Optional[str] = None
+    intent_coverage: Optional[IntentCoverage] = None
+    retrieval: Optional[RetrievalSignal] = None
 
 
 class VariableSummary(BaseModel):

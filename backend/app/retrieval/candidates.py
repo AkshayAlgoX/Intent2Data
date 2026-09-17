@@ -10,6 +10,7 @@ never from an external answer key.
 from dataclasses import dataclass, field
 
 from app.retrieval.index import ModuleHit, RuntimeIndex
+from app.retrieval.text import content_tokens
 
 
 @dataclass(frozen=True)
@@ -29,6 +30,11 @@ class RoleCandidates:
     retrieved_count: int = 0      # variables from the retrieved modules
     expanded_count: int = 0       # additional cross-wave siblings
     truncated: bool = False
+    terms: list[str] = field(default_factory=list)            # intent concept terms, in intent order
+    matched_terms: list[str] = field(default_factory=list)    # intent concept terms present in the catalog vocabulary
+    unmatched_terms: list[str] = field(default_factory=list)  # intent concept terms absent from every module document
+    top_score: float = 0.0                                    # BM25 score of the best module
+    max_possible_score: float = 0.0                           # saturation bound for this intent (see BM25Index)
 
     @property
     def codes(self) -> set[str]:
@@ -43,9 +49,13 @@ def build_role_candidates(index: RuntimeIndex, role: str, intent: str, top_k: in
     result = RoleCandidates(role=role, intent=intent)
     if not intent or not intent.strip():
         return result
+    result.matched_terms, result.unmatched_terms = index.intent_coverage(intent)
+    result.terms = [t for t in content_tokens(intent)]
+    result.max_possible_score = round(index.max_possible_score(intent), 6)
     result.modules = index.search_modules(intent, top_k)
     if not result.modules:
         return result
+    result.top_score = result.modules[0].score
 
     origin: dict[str, tuple[int, str]] = {}   # code -> (best origin rank, source)
     for hit in result.modules:

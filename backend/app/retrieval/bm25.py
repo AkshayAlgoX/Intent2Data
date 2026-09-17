@@ -35,6 +35,15 @@ class BM25Index:
     def __len__(self) -> int:
         return len(self.doc_ids)
 
+    def has_token(self, token: str) -> bool:
+        return token in self.idf
+
+    def max_possible_score(self, query: str) -> float:
+        """Upper bound of `search` for this query: each matched token's
+        contribution saturates at idf·(k1+1) as tf → ∞. Dividing a real top
+        score by this gives a query-length-independent 'strength' in (0, 1]."""
+        return sum(self.idf[t] * (K1 + 1) for t in set(tokenize(query)) if t in self.idf)
+
     def search(self, query: str, k: int) -> list[tuple[str, float]]:
         """Top-k (doc_id, score). Docs with zero score are never returned, so a
         query with no known tokens yields an empty list, not arbitrary docs."""

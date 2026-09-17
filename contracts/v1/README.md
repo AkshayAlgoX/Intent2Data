@@ -34,6 +34,8 @@ pipeline on the synthetic test catalog with a scripted client.
 | `candidates` | `{retrieved, family_expanded, total, truncated}` — variables inside the retrieved modules, cross-wave siblings added structurally, what the LLM was shown, whether the per-call cap cut it |
 | `selections[]` | grounded variables only (see below) |
 | `rejected` | `{out_of_context, hallucinated, parse_errors, over_limit}` — everything the model returned that was **not** forwarded |
+| `intent_coverage` | `{terms, unmatched, coverage}` — which of the intent's concept terms occur anywhere in the module vocabulary (titles + labels). Deterministic, model-independent. An unmatched term could not have influenced retrieval. (additive) |
+| `retrieval` | `{top_score, max_possible_score, strength}` — best module's BM25 score and its saturation bound for this intent; `strength` = ratio in 0..1. **Descriptive and uncalibrated**: good and bad retrievals overlap around 0.2–0.3 on HRS, so no threshold or limitation is derived from it; compare roles within one response only. (additive) |
 
 ### `selections[]`
 `code, label, module_id, section, year, family_id, family_waves[], candidate_source, reason, evidence, grounding`
@@ -46,7 +48,7 @@ pipeline on the synthetic test catalog with a scripted client.
 
 ### `limitations[].code`
 `no_roles`, `intent_parse_warning`, `empty_retrieval`, `no_grounded_selection`, `role_failed`,
-`candidates_truncated`, `hallucinated_ids_dropped`, `ungrounded_ids_dropped`, `evidence_not_verbatim`, `offline_llm`.
+`candidates_truncated`, `hallucinated_ids_dropped`, `ungrounded_ids_dropped`, `evidence_not_verbatim`, `concept_terms_unmatched` (intent term(s) occur in no module document; says whether retrieval fell back to generic words only), `offline_llm`.
 
 ## Errors — `error_response.json`
 Always `{"error": string, "request_id": string, ...}`.
