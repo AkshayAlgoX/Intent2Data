@@ -100,7 +100,23 @@
         "parse_errors": [],
         "over_limit": 0
       },
-      "error": null
+      "error": null,
+      "intent_coverage": {
+        "terms": [
+          "lung",
+          "disease",
+          "chronic"
+        ],
+        "unmatched": [
+          "chronic"
+        ],
+        "coverage": 0.6667
+      },
+      "retrieval": {
+        "top_score": 2.070427,
+        "max_possible_score": 5.725662,
+        "strength": 0.3616
+      }
     },
     {
       "role": "outcome",
@@ -163,7 +179,25 @@
         "parse_errors": [],
         "over_limit": 0
       },
-      "error": null
+      "error": null,
+      "intent_coverage": {
+        "terms": [
+          "felt",
+          "depressed",
+          "past",
+          "week"
+        ],
+        "unmatched": [
+          "past",
+          "week"
+        ],
+        "coverage": 0.5
+      },
+      "retrieval": {
+        "top_score": 2.89059,
+        "max_possible_score": 5.725662,
+        "strength": 0.5048
+      }
     }
   ],
   "variables": [
@@ -200,6 +234,16 @@
   ],
   "limitations": [
     {
+      "code": "concept_terms_unmatched",
+      "role": "exposure",
+      "message": "Intent term(s) 'chronic' occur in no module document of this catalog; retrieval relied on the remaining term(s) 'lung', 'disease'."
+    },
+    {
+      "code": "concept_terms_unmatched",
+      "role": "outcome",
+      "message": "Intent term(s) 'past', 'week' occur in no module document of this catalog; retrieval relied on the remaining term(s) 'felt', 'depressed'."
+    },
+    {
       "code": "offline_llm",
       "role": null,
       "message": "Selections were produced by a deterministic offline stand-in, not a language model. This run demonstrates pipeline behaviour, not model quality."
@@ -226,16 +270,17 @@
       }
     },
     "filter": {
-      "ms": 0.21,
+      "ms": 0.18,
       "detail": {
         "calls": 2,
-        "failed": 0
+        "failed": 0,
+        "retries": 0
       }
     },
     "validation": {
       "ms": 0.03,
       "detail": {
-        "limitations": 1
+        "limitations": 3
       }
     }
   },

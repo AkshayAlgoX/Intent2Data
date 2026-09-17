@@ -18,7 +18,8 @@ from app.llm.offline import MODEL_NAME as OFFLINE_MODEL
 from app.llm.parsing import parse_intent_output, parse_selection_output
 from app.pipeline import prompts
 from app.pipeline.models import (
-    AnalyzeResponse, CandidateStats, IndexInfo, Intent, IntentRole, LLMInfo, ModuleRef, Rejected, RoleResult, StageTiming,
+    AnalyzeResponse, CandidateStats, IndexInfo, Intent, IntentCoverage, IntentRole, LLMInfo, ModuleRef, Rejected,
+    RetrievalSignal, RoleResult, StageTiming,
 )
 from app.pipeline.validation import build_selections, derive_limitations, rejected_from, summarize_variables
 from app.retrieval.candidates import RoleCandidates, build_role_candidates
@@ -121,16 +122,18 @@ class AnalyzePipeline:
             modules = [ModuleRef(rank=h.rank, score=h.score, **self.index.module_summary(h.module_id)) for h in rc.modules]
             cstats = CandidateStats(retrieved=rc.retrieved_count, family_expanded=rc.expanded_count,
                                     total=len(rc.candidates), truncated=rc.truncated)
+            signals = _signals(rc)
             if not rc.candidates:
                 roles.append(RoleResult(role=rc.role, intent=rc.intent, status="empty_retrieval", modules=modules,
-                                        candidates=cstats, selections=[], rejected=Rejected()))
+                                        candidates=cstats, selections=[], rejected=Rejected(), **signals))
                 continue
             try:
                 resp = self._call(stats, request_id, f"filter[{rc.role}]", prompts.FILTER_SYSTEM,
                                   prompts.filter_prompt(question, rc.role, rc.intent, rc.lines), prompts.FILTER_SCHEMA)
             except Exception as exc:
                 roles.append(RoleResult(role=rc.role, intent=rc.intent, status="failed", modules=modules, candidates=cstats,
-                                        selections=[], rejected=Rejected(), error=f"LLM provider failure ({_err_label(exc)})"))
+                                        selections=[], rejected=Rejected(), error=f"LLM provider failure ({_err_label(exc)})",
+                                        **signals))
                 continue
             parsed = parse_selection_output(resp.text, rc.codes, self.index.variables.keys())
             selections, over = build_selections(self.index, rc, parsed, self.config.max_selections_per_role)
@@ -139,6 +142,7 @@ class AnalyzePipeline:
                 role=rc.role, intent=rc.intent, status=status, modules=modules, candidates=cstats,
                 selections=selections, rejected=rejected_from(parsed, over),
                 error=None if parsed.parse_ok else "LLM output unparseable: " + "; ".join(parsed.errors),
+                **signals,
             ))
         stages["filter"] = StageTiming(ms=_ms(t), detail={"calls": stats.calls - 1, "failed": stats.failed_calls, "retries": stats.retries})
 
@@ -165,6 +169,18 @@ class AnalyzePipeline:
                         failed_calls=stats.failed_calls, retries=stats.retries),
             index=IndexInfo(**self.index.stats()),
         )
+
+
+def _signals(rc: RoleCandidates) -> dict:
+    """Deterministic retrieval-stage signals attached to every RoleResult."""
+    terms = list(rc.terms)
+    coverage = IntentCoverage(
+        terms=terms, unmatched=list(rc.unmatched_terms),
+        coverage=round(len(rc.matched_terms) / len(terms), 4) if terms else 1.0,
+    )
+    strength = round(rc.top_score / rc.max_possible_score, 4) if rc.max_possible_score > 0 else 0.0
+    retrieval = RetrievalSignal(top_score=rc.top_score, max_possible_score=rc.max_possible_score, strength=min(1.0, strength))
+    return {"intent_coverage": coverage, "retrieval": retrieval}
 
 
 def _err_label(exc: Exception) -> str:

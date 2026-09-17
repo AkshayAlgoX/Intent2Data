@@ -20,6 +20,7 @@ from typing import Iterable, Optional
 
 from app.retrieval.bm25 import BM25Index
 from app.retrieval.families import family_key, normalize_code
+from app.retrieval.text import content_tokens
 
 INDEX_FORMAT_VERSION = "runtime_index_v1"
 # Fields projected from the raw record. Everything else (raw_block, value
@@ -182,6 +183,18 @@ class RuntimeIndex:
     # ---- queries ------------------------------------------------------------
     def search_modules(self, query: str, k: int) -> list[ModuleHit]:
         return [ModuleHit(mid, rank, round(score, 6)) for rank, (mid, score) in enumerate(self._bm25.search(query, k), 1)]
+
+    def intent_coverage(self, intent: str) -> tuple[list[str], list[str]]:
+        """Split an intent's concept terms into those that occur in at least one
+        module document (product/section titles + variable labels) and those
+        that occur nowhere in the catalog. Deterministic; no model involved."""
+        terms = content_tokens(intent)
+        matched = [t for t in terms if self._bm25.has_token(t)]
+        unmatched = [t for t in terms if not self._bm25.has_token(t)]
+        return matched, unmatched
+
+    def max_possible_score(self, intent: str) -> float:
+        return self._bm25.max_possible_score(intent)
 
     def module_codes(self, module_id: str) -> list[str]:
         return list(self.module_members.get(module_id, []))

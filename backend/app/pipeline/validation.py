@@ -89,6 +89,15 @@ def derive_limitations(roles: list[RoleResult], intent_errors: list[str], llm_li
                                    message=f"Modules were retrieved for '{r.role}' but no candidate variable was selected."))
         elif r.status == "failed":
             lims.append(Limitation(code="role_failed", role=r.role, message=r.error or "role stage failed"))
+        cov = r.intent_coverage
+        if cov and cov.unmatched:
+            all_gone = cov.coverage == 0.0
+            lims.append(Limitation(
+                code="concept_terms_unmatched", role=r.role,
+                message=(f"Intent term(s) {', '.join(repr(t) for t in cov.unmatched)} occur in no module document of this catalog; "
+                         + ("no concept term matched, so the retrieved modules were ranked on generic words only."
+                            if all_gone else "retrieval relied on the remaining term(s) " + ", ".join(repr(t) for t in cov.terms if t not in cov.unmatched) + ".")),
+            ))
         if r.candidates.truncated:
             lims.append(Limitation(code="candidates_truncated", role=r.role,
                                    message="Candidate set exceeded the per-call cap; lowest-provenance candidates were not shown."))

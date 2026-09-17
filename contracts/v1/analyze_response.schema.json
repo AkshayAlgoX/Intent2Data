@@ -107,6 +107,36 @@
       "title": "Intent",
       "type": "object"
     },
+    "IntentCoverage": {
+      "description": "Which of the role intent's concept terms exist anywhere in the codebook\nvocabulary. Deterministic and model-independent: an unmatched term cannot\nhave influenced module retrieval, and if every distinctive term is\nunmatched the retrieved modules were ranked on generic words only.",
+      "properties": {
+        "terms": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Terms",
+          "type": "array"
+        },
+        "unmatched": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Unmatched",
+          "type": "array"
+        },
+        "coverage": {
+          "title": "Coverage",
+          "type": "number"
+        }
+      },
+      "required": [
+        "terms",
+        "unmatched",
+        "coverage"
+      ],
+      "title": "IntentCoverage",
+      "type": "object"
+    },
     "IntentRole": {
       "properties": {
         "role": {
@@ -273,6 +303,30 @@
       "title": "Rejected",
       "type": "object"
     },
+    "RetrievalSignal": {
+      "description": "Descriptive strength of module retrieval for this role. `strength` is\nthe best module's BM25 score divided by the score a perfect document\nwould reach for this intent (0..1). It is NOT calibrated: good and bad\nretrievals overlap in the 0.2-0.3 range on the HRS catalog, so no\nthreshold or limitation is derived from it. Shown so a reader can compare\nroles within one response.",
+      "properties": {
+        "top_score": {
+          "title": "Top Score",
+          "type": "number"
+        },
+        "max_possible_score": {
+          "title": "Max Possible Score",
+          "type": "number"
+        },
+        "strength": {
+          "title": "Strength",
+          "type": "number"
+        }
+      },
+      "required": [
+        "top_score",
+        "max_possible_score",
+        "strength"
+      ],
+      "title": "RetrievalSignal",
+      "type": "object"
+    },
     "RoleResult": {
       "properties": {
         "role": {
@@ -324,6 +378,28 @@
           ],
           "default": null,
           "title": "Error"
+        },
+        "intent_coverage": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/IntentCoverage"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "retrieval": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/RetrievalSignal"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
         }
       },
       "required": [
