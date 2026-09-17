@@ -1,3 +1,5 @@
 {
-  "error": "Invalid request parameters."
+  "error": "Invalid request parameters.",
+  "detail": [],
+  "request_id": "9f1c2e4a0b6d4d5e8a7b3c2d1e0f9a8b"
 }

@@ -1,0 +1,1898 @@
+{
+  "index": {
+    "variables": 122296,
+    "modules": 932,
+    "families": 94221,
+    "fingerprint": "ad858fde4e28f02e"
+  },
+  "top_k": 5,
+  "scan_k": 50,
+  "candidates": [
+    {
+      "id": "1.1",
+      "question": "How does current smoking status relate to self-reported health?",
+      "runtime_intents": {
+        "exposure": "current smoking status",
+        "outcome": "self-reported health"
+      },
+      "roles": {
+        "exposure": {
+          "doc_intent": "current smoking status smoke cigarettes",
+          "expectations": [
+            {
+              "pattern": "SMOKE",
+              "via_doc_intent": [
+                "FOUND_TOPK",
+                {
+                  "matching_in_catalog": 154,
+                  "in_candidates": 47,
+                  "examples": [
+                    "B010_09",
+                    "G1399",
+                    "G1400",
+                    "G1401",
+                    "G1402"
+                  ],
+                  "modules": [
+                    "2000_core::B",
+                    "2009_internet_survey::I",
+                    "2002_core::C",
+                    "2004_core::C",
+                    "2006_core::C"
+                  ],
+                  "truncated": true
+                }
+              ],
+              "via_runtime_intent": [
+                "FOUND_TOPK",
+                {
+                  "matching_in_catalog": 154,
+                  "in_candidates": 10,
+                  "examples": [
+                    "B010_09",
+                    "JZ205",
+                    "KZ205",
+                    "LZ205",
+                    "MZ205"
+                  ],
+                  "modules": [
+                    "2009_internet_survey::I",
+                    "2006_core::PR",
+                    "2008_core::PR",
+                    "2010_core::PR",
+                    "2016_core::PR"
+                  ],
+                  "truncated": true
+                }
+              ]
+            }
+          ]
+        },
+        "outcome": {
+          "doc_intent": "self-reported general health rating",
+          "expectations": [
+            {
+              "pattern": "RATE.*HEALTH|HEALTH.*(EXCELLENT|RATING|STATUS)|SELF.?RATED",
+              "via_doc_intent": [
+                "FOUND_TOPK",
+                {
+                  "matching_in_catalog": 107,
+                  "in_candidates": 2,
+                  "examples": [
+                    "B005_11",
+                    "C013_11"
+                  ],
+                  "modules": [
+                    "2011_internet_survey::I",
+                    "2004_hrs_core_imputations::Q",
+                    "2002_hrs_core_imputations::Q",
+                    "2006_core::PR",
+                    "2010_core::PR"
+                  ],
+                  "truncated": true
+                }
+              ],
+              "via_runtime_intent": [
+                "REACHABLE_DEEPER",
+                {
+                  "matching_in_catalog": 107,
+                  "best_module_rank": 9,
+                  "examples": [
+                    "HCMS11",
+                    "HCNS13",
+                    "HSM19",
+                    "HWB09",
+                    "SC001"
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "doc_checks": [],
+      "runtime_run": {
+        "status": "ok",
+        "roles": {
+          "exposure": {
+            "status": "ok",
+            "modules": [
+              "2009_internet_survey::I",
+              "2006_core::PR",
+              "2008_core::PR",
+              "2010_core::PR",
+              "2016_core::PR"
+            ],
+            "candidates": 2000,
+            "selected": [
+              "A008_09",
+              "A009M1A_09",
+              "A009M1_09",
+              "A009M2A_09",
+              "A009M2_09",
+              "A009M3_09",
+              "A009M4_09",
+              "A009M5_09"
+            ]
+          },
+          "outcome": {
+            "status": "ok",
+            "modules": [
+              "2004_hrs_core_imputations::Q",
+              "2002_hrs_core_imputations::Q",
+              "2006_core::PR",
+              "2010_core::PR",
+              "2008_core::PR"
+            ],
+            "candidates": 2000,
+            "selected": [
+              "KZ219",
+              "NZ219",
+              "OZ219",
+              "PZ219",
+              "QZ219",
+              "KZ095",
+              "KZ136",
+              "KZ200_1"
+            ]
+          }
+        },
+        "limitations": [
+          "candidates_truncated",
+          "candidates_truncated",
+          "offline_llm"
+        ]
+      }
+    },
+    {
+      "id": "1.2",
+      "question": "Does years of education predict household income?",
+      "runtime_intents": {
+        "exposure": "years of education",
+        "outcome": "household income"
+      },
+      "roles": {
+        "exposure": {
+          "doc_intent": "years of education highest grade completed",
+          "expectations": [
+            {
+              "pattern": "YEARS OF EDUC|HIGHEST GRADE|EDUCATION",
+              "via_doc_intent": [
+                "FOUND_TOPK",
+                {
+                  "matching_in_catalog": 161,
+                  "in_candidates": 39,
+                  "examples": [
+                    "HB014",
+                    "HB014A",
+                    "HB026",
+                    "HB027",
+                    "JB014"
+                  ],
+                  "modules": [
+                    "1992_core::Section A: Demographic Background",
+                    "2002_core::B",
+                    "2004_core::B",
+                    "2002_hrs_exit::B",
+                    "2004_hrs_exit::B"
+                  ],
+                  "truncated": false
+                }
+              ],
+              "via_runtime_intent": [
+                "FOUND_TOPK",
+                {
+                  "matching_in_catalog": 161,
+                  "in_candidates": 38,
+                  "examples": [
+                    "HB014",
+                    "HB014A",
+                    "HB026",
+                    "HB027",
+                    "JB014"
+                  ],
+                  "modules": [
+                    "2002_core::B",
+                    "2004_core::B",
+                    "2004_hrs_exit::B",
+                    "2002_hrs_exit::B",
+                    "2006_core::B"
+                  ],
+                  "truncated": false
+                }
+              ]
+            }
+          ]
+        },
+        "outcome": {
+          "doc_intent": "total household income",
+          "expectations": [
+            {
+              "pattern": "HOUSEHOLD INCOME|HH INC|TOTAL INCOME",
+              "via_doc_intent": [
+                "FOUND_TOPK",
+                {
+                  "matching_in_catalog": 24,
+                  "in_candidates": 5,
+                  "examples": [
+                    "DHHINC",
+                    "EHHINC",
+                    "FHHINC",
+                    "GHHINC",
+                    "HHHINC"
+                  ],
+                  "modules": [
+                    "1996_hrs_core_imputations::JH",
+                    "1998_hrs_core_imputations::JH",
+                    "1995_ahead_core_imputations::JH",
+                    "2000_hrs_core_imputations::JH",
+                    "2002_hrs_core_imputations::Q"
+                  ],
+                  "truncated": true
+                }
+              ],
+              "via_runtime_intent": [
+                "FOUND_TOPK",
+                {
+                  "matching_in_catalog": 24,
+                  "in_candidates": 6,
+                  "examples": [
+                    "F1_21",
+                    "HHHINC",
+                    "JHHINC",
+                    "V6559",
+                    "W6501X"
+                  ],
+                  "modules": [
+                    "1994_hrs_core_imputations::N",
+                    "1992_core::Section N: Income (Part 4)",
+                    "2021_hrs_perspectives_on_the_pandemic_combined_spring_and_fall_mail_survey::F",
+                    "2002_hrs_core_imputations::Q",
+                    "1995_ahead_core_imputations::DMC"
+                  ],
+                  "truncated": false
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "doc_checks": [
+        {
+          "code": "RAEDUC",
+          "status": "DOC_INCONSISTENT",
+          "reason": "code not in catalog"
+        },
+        {
+          "label": "TOT HH INC",
+          "status": "DOC_INCONSISTENT",
+          "codes": [],
+          "reason": "no variable with this label in catalog"
+        }
+      ],
+      "runtime_run": {
+        "status": "ok",
+        "roles": {
+          "exposure": {
+            "status": "ok",
+            "modules": [
+              "2002_core::B",
+              "2004_core::B",
+              "2004_hrs_exit::B",
+              "2002_hrs_exit::B",
+              "2006_core::B"
+            ],
+            "candidates": 964,
+            "selected": [
+              "KB013",
+              "KB045",
+              "KB070_1",
+              "KB070_2",
+              "KB070_3",
+              "KB070_4",
+              "LB013",
+              "LB045"
+            ]
+          },
+          "outcome": {
+            "status": "ok",
+            "modules": [
+              "1994_hrs_core_imputations::N",
+              "1992_core::Section N: Income (Part 4)",
+              "2021_hrs_perspectives_on_the_pandemic_combined_spring_and_fall_mail_survey::F",
+              "2002_hrs_core_imputations::Q",
+              "1995_ahead_core_imputations::DMC"
+            ],
+            "candidates": 1176,
+            "selected": [
+              "V6559",
+              "F1_21",
+              "HHHINC",
+              "JHHINC",
+              "V1991",
+              "V6558",
+              "WHHINC",
+              "F2A_21"
+            ]
+          }
+        },
+        "limitations": [
+          "offline_llm"
+        ]
+      }
+    },
+    {
+      "id": "1.3",
+      "question": "Is there a relationship between age and retirement status?",
+      "runtime_intents": {
+        "exposure": "there a",
+        "outcome": "age and retirement status"
+      },
+      "roles": {
+        "exposure": {
+          "doc_intent": "respondent age",
+          "expectations": [
+            {
+              "pattern": "^AGE\\b|R AGE|AGE AT|AGE IN YEARS",
+              "via_doc_intent": [
+                "FOUND_TOPK",
+                {
+                  "matching_in_catalog": 1572,
+                  "in_candidates": 300,
+                  "examples": [
+                    "AGE2010_10",
+                    "AGE2016",
+                    "AGEER_10",
+                    "AGEER_16",
+                    "AGENR_10"
+                  ],
+                  "modules": [
+                    "cross_wave_prospective_social_security_wealth_measures_of_pre_retirees_1992_2020::A",
+                    "2020_core::B",
+                    "2018_core::B",
+                    "employer_sponsored_pension_wealth_from_current_jobs_in_2016::A",
+                    "employer_sponsored_pension_wealth_from_current_jobs_in_2010_codebook::A"
+                  ],
+                  "truncated": false
+                }
+              ],
+              "via_runtime_intent": [
+                "FOUND_TOPK",
+                {
+                  "matching_in_catalog": 1572,
+                  "in_candidates": 6,
+                  "examples": [
+                    "W3457",
+                    "W3607",
+                    "W4312",
+                    "W4896",
+                    "W5001"
+                  ],
+                  "modules": [
+                    "1994_core::Section FA: Employment (Employees)",
+                    "1992_core::Section D: Housing (Part 2)",
+                    "1994_core::Section FC: Employment",
+                    "1994_core::Section FB: Employment",
+                    "1994_core::Section H: Job History"
+                  ],
+                  "truncated": false
+                }
+              ]
+            }
+          ]
+        },
+        "outcome": {
+          "doc_intent": "retirement status retired",
+          "expectations": [
+            {
+              "pattern": "RETIRE",
+              "via_doc_intent": [
+                "FOUND_TOPK",
+                {
+                  "matching_in_catalog": 1133,
+                  "in_candidates": 176,
+                  "examples": [
+                    "HJ017",
+                    "HJ018",
+                    "HJ064",
+                    "HJ549",
+                    "HJ564"
+                  ],
+                  "modules": [
+                    "2012_core::J",
+                    "2014_core::J",
+                    "2009_internet_survey::I",
+                    "2020_core::J3",
+                    "2022_core::J3"
+                  ],
+                  "truncated": true
+                }
+              ],
+              "via_runtime_intent": [
+                "FOUND_TOPK",
+                {
+                  "matching_in_catalog": 1133,
+                  "in_candidates": 160,
+                  "examples": [
+                    "D012_09",
+                    "D013_09",
+                    "D113_09",
+                    "D114_09",
+                    "D115_09"
+                  ],
+                  "modules": [
+                    "2009_internet_survey::I",
+                    "2012_core::J",
+                    "2014_core::J",
+                    "2004_core::J",
+                    "employer_sponsored_pension_wealth_from_current_jobs_in_2016::A"
+                  ],
+                  "truncated": true
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "doc_checks": [],
+      "runtime_run": {
+        "status": "ok",
+        "roles": {
+          "exposure": {
+            "status": "no_selection",
+            "modules": [
+              "1994_core::Section FA: Employment (Employees)",
+              "1992_core::Section D: Housing (Part 2)",
+              "1994_core::Section FC: Employment",
+              "1994_core::Section FB: Employment",
+              "1994_core::Section H: Job History"
+            ],
+            "candidates": 936,
+            "selected": []
+          },
+          "outcome": {
+            "status": "ok",
+            "modules": [
+              "2009_internet_survey::I",
+              "2012_core::J",
+              "2014_core::J",
+              "2004_core::J",
+              "employer_sponsored_pension_wealth_from_current_jobs_in_2016::A"
+            ],
+            "candidates": 2000,
+            "selected": [
+              "KJ564",
+              "LJ564",
+              "NJ564",
+              "HJ564",
+              "A008_09",
+              "CA_RS_AGE",
+              "D114_09",
+              "G009_09"
+            ]
+          }
+        },
+        "limitations": [
+          "no_grounded_selection",
+          "candidates_truncated",
+          "offline_llm"
+        ]
+      }
+    },
+    {
+      "id": "2.1",
+      "question": "How does lifelong religious and spiritual involvement shape physical functioning in later life?",
+      "runtime_intents": {
+        "exposure": "lifelong religious and spiritual involvement",
+        "outcome": "physical functioning in later life"
+      },
+      "roles": {
+        "exposure": {
+          "doc_intent": "lifelong religious spiritual involvement childhood attend services",
+          "expectations": [
+            {
+              "pattern": "ATTEND.*SERVICE|RELIG|SPIRITUAL",
+              "via_doc_intent": [
+                "FOUND_TOPK",
+                {
+                  "matching_in_catalog": 123,
+                  "in_candidates": 18,
+                  "examples": [
+                    "PV351M",
+                    "PV355",
+                    "PV356",
+                    "PV357",
+                    "PV358"
+                  ],
+                  "modules": [
+                    "2016_core::V",
+                    "2022_core::B",
+                    "2008_hrs_exit::B",
+                    "2006_hrs_exit::B",
+                    "2002_hrs_exit::B"
+                  ],
+                  "truncated": false
+                }
+              ],
+              "via_runtime_intent": [
+                "FOUND_TOPK",
+                {
+                  "matching_in_catalog": 123,
+                  "in_candidates": 21,
+                  "examples": [
+                    "PV351M",
+                    "PV355",
+                    "PV356",
+                    "PV357",
+                    "PV358"
+                  ],
+                  "modules": [
+                    "2016_core::V",
+                    "2020_core::LB",
+                    "1992_core::Section A: Demographic Background",
+                    "1994_core::Section A: Demographic Background",
+                    "2022_core::LB"
+                  ],
+                  "truncated": true
+                }
+              ]
+            }
+          ]
+        },
+        "outcome": {
+          "doc_intent": "physical functioning walking climbing stairs bathing dressing ADL",
+          "expectations": [
+            {
+              "pattern": "WALK|CLIMB|BATH|DRESS|ADL",
+              "via_doc_intent": [
+                "FOUND_TOPK",
+                {
+                  "matching_in_catalog": 2218,
+                  "in_candidates": 608,
+                  "examples": [
+                    "HG001",
+                    "HG003",
+                    "HG006",
+                    "HG007",
+                    "HG014"
+                  ],
+                  "modules": [
+                    "2006_core::G",
+                    "2008_core::G",
+                    "2004_core::G",
+                    "2002_core::G",
+                    "2018_core::G"
+                  ],
+                  "truncated": false
+                }
+              ],
+              "via_runtime_intent": [
+                "FOUND_TOPK",
+                {
+                  "matching_in_catalog": 2218,
+                  "in_candidates": 21,
+                  "examples": [
+                    "L006_11",
+                    "NV423",
+                    "NV424",
+                    "NV425",
+                    "NV426"
+                  ],
+                  "modules": [
+                    "2012_core::V",
+                    "1992_core::Section J: Disability (Part 4)",
+                    "1994_core::Section J: Disability",
+                    "2003_diabetes_study_codebook::A",
+                    "2011_internet_survey::I"
+                  ],
+                  "truncated": false
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "doc_checks": [
+        {
+          "code": "PV355",
+          "module": "2016_core::V",
+          "label": "HOW OFTEN ATTEND SERVICES DURING CHILDHOOD",
+          "via_doc_intent": [
+            "FOUND_TOPK",
+            {
+              "matching_in_catalog": 1,
+              "in_candidates": 1,
+              "examples": [
+                "PV355"
+              ],
+              "modules": [
+                "2016_core::V",
+                "2022_core::B",
+                "2008_hrs_exit::B",
+                "2006_hrs_exit::B",
+                "2002_hrs_exit::B"
+              ],
+              "truncated": false
+            }
+          ],
+          "via_runtime_intent": [
+            "FOUND_TOPK",
+            {
+              "matching_in_catalog": 1,
+              "in_candidates": 1,
+              "examples": [
+                "PV355"
+              ],
+              "modules": [
+                "2016_core::V",
+                "2020_core::LB",
+                "1992_core::Section A: Demographic Background",
+                "1994_core::Section A: Demographic Background",
+                "2022_core::LB"
+              ],
+              "truncated": true
+            }
+          ]
+        }
+      ],
+      "runtime_run": {
+        "status": "ok",
+        "roles": {
+          "exposure": {
+            "status": "ok",
+            "modules": [
+              "2016_core::V",
+              "2020_core::LB",
+              "1992_core::Section A: Demographic Background",
+              "1994_core::Section A: Demographic Background",
+              "2022_core::LB"
+            ],
+            "candidates": 2000,
+            "selected": [
+              "PV360",
+              "PV364",
+              "PV356",
+              "PV357",
+              "PV358",
+              "PV365",
+              "PV351M",
+              "PV359"
+            ]
+          },
+          "outcome": {
+            "status": "ok",
+            "modules": [
+              "2012_core::V",
+              "1992_core::Section J: Disability (Part 4)",
+              "1994_core::Section J: Disability",
+              "2003_diabetes_study_codebook::A",
+              "2011_internet_survey::I"
+            ],
+            "candidates": 1755,
+            "selected": [
+              "QXC5F",
+              "QXD1D",
+              "QXD2D",
+              "QXK2D",
+              "B009_11",
+              "NV072",
+              "NV076",
+              "NV080"
+            ]
+          }
+        },
+        "limitations": [
+          "candidates_truncated",
+          "offline_llm"
+        ]
+      }
+    },
+    {
+      "id": "2.2",
+      "question": "Does pre-pandemic functional impairment predict survival outcomes after COVID-19?",
+      "runtime_intents": {
+        "exposure": "pre-pandemic functional impairment",
+        "outcome": "survival outcomes after COVID-19"
+      },
+      "roles": {
+        "exposure": {
+          "doc_intent": "functional impairment ADL difficulty walking bathing dressing",
+          "expectations": [
+            {
+              "pattern": "DIFFICULTY.*(WALK|BATH|DRESS)|ADL",
+              "via_doc_intent": [
+                "FOUND_TOPK",
+                {
+                  "matching_in_catalog": 1366,
+                  "in_candidates": 174,
+                  "examples": [
+                    "UG020",
+                    "UG022",
+                    "UG024",
+                    "UG029",
+                    "UG031"
+                  ],
+                  "modules": [
+                    "2006_hrs_exit::G",
+                    "2008_hrs_exit::G",
+                    "2022_hrs_exit::G",
+                    "2018_hrs_exit::G",
+                    "2020_hrs_exit::G"
+                  ],
+                  "truncated": false
+                }
+              ],
+              "via_runtime_intent": [
+                "REACHABLE_DEEPER",
+                {
+                  "matching_in_catalog": 1366,
+                  "best_module_rank": 23,
+                  "examples": [
+                    "SG003",
+                    "SG032_1",
+                    "SG033_1",
+                    "SG035_1",
+                    "SG032_2"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "outcome": {
+          "doc_intent": "survival mortality death year vital status",
+          "expectations": [
+            {
+              "pattern": "YEAR OF DEATH|VITAL STATUS|DEATH|DECEASED|ALIVE",
+              "via_doc_intent": [
+                "FOUND_TOPK",
+                {
+                  "matching_in_catalog": 1473,
+                  "in_candidates": 36,
+                  "examples": [
+                    "AALIVE",
+                    "BALIVE",
+                    "CALIVE",
+                    "CVITSTAT",
+                    "DALIVE"
+                  ],
+                  "modules": [
+                    "tracker::TR",
+                    "the_aging_demographics_and_memory_study_adams_cross_wave_tracker_file::TRK",
+                    "2008_core::P",
+                    "2004_hrs_post_exit::PR",
+                    "2002_hrs_post_exit::PR"
+                  ],
+                  "truncated": false
+                }
+              ],
+              "via_runtime_intent": [
+                "FOUND_TOPK",
+                {
+                  "matching_in_catalog": 1473,
+                  "in_candidates": 5,
+                  "examples": [
+                    "XSN257",
+                    "XSN301",
+                    "XSN302",
+                    "XSN309",
+                    "XSN310"
+                  ],
+                  "modules": [
+                    "2021_hrs_perspectives_on_the_pandemic_combined_spring_and_fall_mail_survey::A",
+                    "2021_hrs_perspectives_on_the_pandemic_combined_spring_and_fall_mail_survey::B",
+                    "2022_hrs_exit::N",
+                    "2008_core::P",
+                    "2021_hrs_perspectives_on_the_pandemic_combined_spring_and_fall_mail_survey::C"
+                  ],
+                  "truncated": false
+                }
+              ]
+            }
+          ]
+        },
+        "covariates": {
+          "doc_intent": "COVID-19 coronavirus pandemic infection",
+          "expectations": [
+            {
+              "pattern": "COVID|CORONAVIRUS",
+              "via_doc_intent": [
+                "FOUND_TOPK",
+                {
+                  "matching_in_catalog": 125,
+                  "in_candidates": 90,
+                  "examples": [
+                    "A11_21",
+                    "A13A_21",
+                    "A13B_21",
+                    "A13C_21",
+                    "A13D_21"
+                  ],
+                  "modules": [
+                    "2021_hrs_perspectives_on_the_pandemic_combined_spring_and_fall_mail_survey::B",
+                    "2021_hrs_perspectives_on_the_pandemic_combined_spring_and_fall_mail_survey::A",
+                    "2021_hrs_perspectives_on_the_pandemic_combined_spring_and_fall_mail_survey::C",
+                    "2021_hrs_perspectives_on_the_pandemic_combined_spring_and_fall_mail_survey::E",
+                    "2022_hrs_exit::N"
+                  ],
+                  "truncated": false
+                }
+              ],
+              "via_runtime_intent": [
+                "NO_RUNTIME_INTENT",
+                {}
+              ]
+            }
+          ]
+        }
+      },
+      "doc_checks": [
+        {
+          "code": "EXDEATHYR",
+          "module": "tracker::TR",
+          "label": "YEAR OF DEATH",
+          "via_doc_intent": [
+            "FOUND_TOPK",
+            {
+              "matching_in_catalog": 1,
+              "in_candidates": 1,
+              "examples": [
+                "EXDEATHYR"
+              ],
+              "modules": [
+                "tracker::TR",
+                "the_aging_demographics_and_memory_study_adams_cross_wave_tracker_file::TRK",
+                "2008_core::P",
+                "2004_hrs_post_exit::PR",
+                "2002_hrs_post_exit::PR"
+              ],
+              "truncated": false
+            }
+          ],
+          "via_runtime_intent": [
+            "NOT_RETRIEVED",
+            {
+              "matching_in_catalog": 1,
+              "examples": [
+                "EXDEATHYR"
+              ]
+            }
+          ]
+        },
+        {
+          "code": "QALIVE",
+          "module": "tracker::TR",
+          "label": "2018 VITAL STATUS",
+          "via_doc_intent": [
+            "FOUND_TOPK",
+            {
+              "matching_in_catalog": 1,
+              "in_candidates": 1,
+              "examples": [
+                "QALIVE"
+              ],
+              "modules": [
+                "tracker::TR",
+                "the_aging_demographics_and_memory_study_adams_cross_wave_tracker_file::TRK",
+                "2008_core::P",
+                "2004_hrs_post_exit::PR",
+                "2002_hrs_post_exit::PR"
+              ],
+              "truncated": false
+            }
+          ],
+          "via_runtime_intent": [
+            "NOT_RETRIEVED",
+            {
+              "matching_in_catalog": 1,
+              "examples": [
+                "QALIVE"
+              ]
+            }
+          ]
+        }
+      ],
+      "runtime_run": {
+        "status": "ok",
+        "roles": {
+          "exposure": {
+            "status": "ok",
+            "modules": [
+              "2021_hrs_perspectives_on_the_pandemic_combined_spring_and_fall_mail_survey::E",
+              "2016_harmonized_cognitive_assessment_protocol_hcap_summary_cognitive_and_functional_measures_data::A",
+              "2021_hrs_perspectives_on_the_pandemic_combined_spring_and_fall_mail_survey::H",
+              "2021_hrs_perspectives_on_the_pandemic_combined_spring_and_fall_mail_survey::C",
+              "2021_hrs_perspectives_on_the_pandemic_combined_spring_and_fall_mail_survey::G"
+            ],
+            "candidates": 353,
+            "selected": [
+              "E1_21",
+              "C8A_21",
+              "C8B_21",
+              "C8C_21",
+              "C8D_21",
+              "C8E_21",
+              "C8F_21",
+              "C8G_21"
+            ]
+          },
+          "outcome": {
+            "status": "ok",
+            "modules": [
+              "2021_hrs_perspectives_on_the_pandemic_combined_spring_and_fall_mail_survey::A",
+              "2021_hrs_perspectives_on_the_pandemic_combined_spring_and_fall_mail_survey::B",
+              "2022_hrs_exit::N",
+              "2008_core::P",
+              "2021_hrs_perspectives_on_the_pandemic_combined_spring_and_fall_mail_survey::C"
+            ],
+            "candidates": 704,
+            "selected": [
+              "A13A_21",
+              "A13B_21",
+              "A13C_21",
+              "A13D_21",
+              "A14_21",
+              "A15A_21",
+              "A15B_21",
+              "A15C_21"
+            ]
+          }
+        },
+        "limitations": [
+          "offline_llm"
+        ]
+      }
+    },
+    {
+      "id": "2.3",
+      "question": "How do childhood socioeconomic conditions affect late-life cognitive decline?",
+      "runtime_intents": {
+        "exposure": "childhood socioeconomic conditions",
+        "outcome": "late-life cognitive decline"
+      },
+      "roles": {
+        "exposure": {
+          "doc_intent": "childhood socioeconomic status father mother education family financial situation",
+          "expectations": [
+            {
+              "pattern": "FATHER EDUC|MOTHER EDUC|CHILDHOOD|FAMILY.*FINANC|FINANCIAL.*(CHILD|GROW)",
+              "via_doc_intent": [
+                "FOUND_TOPK",
+                {
+                  "matching_in_catalog": 293,
+                  "in_candidates": 89,
+                  "examples": [
+                    "HB020",
+                    "HB022",
+                    "HB023",
+                    "HB025",
+                    "HB026"
+                  ],
+                  "modules": [
+                    "2022_core::B",
+                    "2008_hrs_exit::B",
+                    "2006_hrs_exit::B",
+                    "2002_core::B",
+                    "2004_core::B"
+                  ],
+                  "truncated": false
+                }
+              ],
+              "via_runtime_intent": [
+                "FOUND_TOPK",
+                {
+                  "matching_in_catalog": 293,
+                  "in_candidates": 145,
+                  "examples": [
+                    "HB020",
+                    "HB022",
+                    "HB023",
+                    "HB025",
+                    "HB026"
+                  ],
+                  "modules": [
+                    "2020_core::B",
+                    "2018_core::B",
+                    "2016_core::B",
+                    "2014_core::B",
+                    "2008_core::B"
+                  ],
+                  "truncated": false
+                }
+              ]
+            }
+          ]
+        },
+        "outcome": {
+          "doc_intent": "cognitive decline memory word recall",
+          "expectations": [
+            {
+              "pattern": "MEMORY|WORD RECALL|RECALL|COGNIT|TICS",
+              "via_doc_intent": [
+                "FOUND_TOPK",
+                {
+                  "matching_in_catalog": 2162,
+                  "in_candidates": 394,
+                  "examples": [
+                    "HD101",
+                    "HD102",
+                    "HD150",
+                    "HD170",
+                    "HD171"
+                  ],
+                  "modules": [
+                    "2004_core::D",
+                    "2006_core::D",
+                    "2002_core::D",
+                    "2016_core::D",
+                    "2010_core::D"
+                  ],
+                  "truncated": false
+                }
+              ],
+              "via_runtime_intent": [
+                "FOUND_TOPK",
+                {
+                  "matching_in_catalog": 2162,
+                  "in_candidates": 33,
+                  "examples": [
+                    "AJAA2",
+                    "AJB1",
+                    "AJB2",
+                    "AJC2",
+                    "AJD2"
+                  ],
+                  "modules": [
+                    "2006_core::V",
+                    "2009_internet_survey::I",
+                    "the_aging_demographics_and_memory_study_adams_wave_a::AJ",
+                    "the_aging_demographics_and_memory_study_adams_wave_b::BJ",
+                    "the_aging_demographics_and_memory_study_adams_wave_c::CJ"
+                  ],
+                  "truncated": false
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "doc_checks": [
+        {
+          "label": "FATHER EDUCATION- HIGHEST GRADE",
+          "status": "OK",
+          "codes": [
+            "SB026",
+            "RB026",
+            "QB026",
+            "PB026",
+            "OB026"
+          ],
+          "reason": ""
+        }
+      ],
+      "runtime_run": {
+        "status": "ok",
+        "roles": {
+          "exposure": {
+            "status": "ok",
+            "modules": [
+              "2020_core::B",
+              "2018_core::B",
+              "2016_core::B",
+              "2014_core::B",
+              "2008_core::B"
+            ],
+            "candidates": 1436,
+            "selected": [
+              "LB125M1M",
+              "LB125M2M",
+              "LB125M3M",
+              "MB125M1M",
+              "MB125M2M",
+              "MB125M3M",
+              "LB124",
+              "MB124"
+            ]
+          },
+          "outcome": {
+            "status": "ok",
+            "modules": [
+              "2006_core::V",
+              "2009_internet_survey::I",
+              "the_aging_demographics_and_memory_study_adams_wave_a::AJ",
+              "the_aging_demographics_and_memory_study_adams_wave_b::BJ",
+              "the_aging_demographics_and_memory_study_adams_wave_c::CJ"
+            ],
+            "candidates": 1749,
+            "selected": [
+              "KV056_1",
+              "KV056_2",
+              "KV056_3",
+              "KV056_4",
+              "KV072_1",
+              "KV072_2",
+              "KV072_3",
+              "KV072_4"
+            ]
+          }
+        },
+        "limitations": [
+          "offline_llm"
+        ]
+      }
+    },
+    {
+      "id": "2.4",
+      "question": "Is neighborhood social cohesion related to cardiovascular health?",
+      "runtime_intents": {
+        "exposure": "neighborhood social cohesion",
+        "outcome": "cardiovascular health"
+      },
+      "roles": {
+        "exposure": {
+          "doc_intent": "neighborhood social cohesion neighbors trust",
+          "expectations": [
+            {
+              "pattern": "NEIGHBOR",
+              "via_doc_intent": [
+                "FOUND_TOPK",
+                {
+                  "matching_in_catalog": 50,
+                  "in_candidates": 13,
+                  "examples": [
+                    "OLB013A",
+                    "OLB017A",
+                    "PLB013A",
+                    "PLB017A",
+                    "QLB013A"
+                  ],
+                  "modules": [
+                    "2020_core::LB",
+                    "the_aging_demographics_and_memory_study_adams_wave_a::AC",
+                    "the_aging_demographics_and_memory_study_adams_wave_b::BC",
+                    "the_aging_demographics_and_memory_study_adams_wave_d::DC",
+                    "the_aging_demographics_and_memory_study_adams_wave_c::CC"
+                  ],
+                  "truncated": true
+                }
+              ],
+              "via_runtime_intent": [
+                "FOUND_TOPK",
+                {
+                  "matching_in_catalog": 50,
+                  "in_candidates": 8,
+                  "examples": [
+                    "AC38",
+                    "BC38",
+                    "QLB013A",
+                    "QLB017A",
+                    "RLB013A"
+                  ],
+                  "modules": [
+                    "2018_core::LB",
+                    "the_aging_demographics_and_memory_study_adams_wave_a::AC",
+                    "the_aging_demographics_and_memory_study_adams_wave_b::BC",
+                    "2014_core::LB",
+                    "2016_core::LB"
+                  ],
+                  "truncated": true
+                }
+              ]
+            }
+          ]
+        },
+        "outcome": {
+          "doc_intent": "cardiovascular health heart attack stroke hypertension",
+          "expectations": [
+            {
+              "pattern": "HEART|STROKE|HIGH BLOOD PRESSURE|HYPERTENS",
+              "via_doc_intent": [
+                "FOUND_TOPK",
+                {
+                  "matching_in_catalog": 1083,
+                  "in_candidates": 265,
+                  "examples": [
+                    "HC005",
+                    "HC007",
+                    "HC009",
+                    "HC036",
+                    "HC037"
+                  ],
+                  "modules": [
+                    "2000_hrs_exit::B",
+                    "2002_core::C",
+                    "2020_core::C",
+                    "2018_core::C",
+                    "2022_hrs_exit::C"
+                  ],
+                  "truncated": true
+                }
+              ],
+              "via_runtime_intent": [
+                "FOUND_TOPK",
+                {
+                  "matching_in_catalog": 1083,
+                  "in_candidates": 32,
+                  "examples": [
+                    "AJE6",
+                    "AJF6",
+                    "AJN1",
+                    "AJN1MET",
+                    "AJN2"
+                  ],
+                  "modules": [
+                    "the_aging_demographics_and_memory_study_adams_wave_a::AJ",
+                    "the_aging_demographics_and_memory_study_adams_wave_b::BJ",
+                    "the_aging_demographics_and_memory_study_adams_wave_c::CJ",
+                    "the_aging_demographics_and_memory_study_adams_wave_d::DJ",
+                    "2011_health_care_mail_survey_hcms::A"
+                  ],
+                  "truncated": false
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "doc_checks": [],
+      "runtime_run": {
+        "status": "ok",
+        "roles": {
+          "exposure": {
+            "status": "ok",
+            "modules": [
+              "2018_core::LB",
+              "the_aging_demographics_and_memory_study_adams_wave_a::AC",
+              "the_aging_demographics_and_memory_study_adams_wave_b::BC",
+              "2014_core::LB",
+              "2016_core::LB"
+            ],
+            "candidates": 2000,
+            "selected": [
+              "AC115",
+              "AC119",
+              "BC115",
+              "BC119",
+              "QLB017A",
+              "RLB017A",
+              "SLB017A",
+              "AC117AGE"
+            ]
+          },
+          "outcome": {
+            "status": "ok",
+            "modules": [
+              "the_aging_demographics_and_memory_study_adams_wave_a::AJ",
+              "the_aging_demographics_and_memory_study_adams_wave_b::BJ",
+              "the_aging_demographics_and_memory_study_adams_wave_c::CJ",
+              "the_aging_demographics_and_memory_study_adams_wave_d::DJ",
+              "2011_health_care_mail_survey_hcms::A"
+            ],
+            "candidates": 1224,
+            "selected": [
+              "HCA01_11",
+              "HCA04_11",
+              "HCA06_11",
+              "HCA17_11",
+              "HCA42_11",
+              "AJQ1",
+              "AJQ3",
+              "BJQ1"
+            ]
+          }
+        },
+        "limitations": [
+          "candidates_truncated",
+          "offline_llm"
+        ]
+      }
+    },
+    {
+      "id": "2.5",
+      "question": "Does exposure to job stress over generations affect memory?",
+      "runtime_intents": {
+        "exposure": "exposure to job stress over generations",
+        "outcome": "memory"
+      },
+      "roles": {
+        "exposure": {
+          "doc_intent": "job stress work stress occupational",
+          "expectations": [
+            {
+              "pattern": "STRESS",
+              "via_doc_intent": [
+                "FOUND_TOPK",
+                {
+                  "matching_in_catalog": 117,
+                  "in_candidates": 14,
+                  "examples": [
+                    "E10A_21",
+                    "E10B_21",
+                    "JV458",
+                    "JV464",
+                    "LV270"
+                  ],
+                  "modules": [
+                    "2021_hrs_perspectives_on_the_pandemic_combined_spring_and_fall_mail_survey::E",
+                    "1993_ahead_core::SECTION G.  JOB STATUS",
+                    "2008_core::V",
+                    "1992_core::Section F: Employment of Respondent (Part 3)",
+                    "2004_core::V"
+                  ],
+                  "truncated": false
+                }
+              ],
+              "via_runtime_intent": [
+                "FOUND_TOPK",
+                {
+                  "matching_in_catalog": 117,
+                  "in_candidates": 5,
+                  "examples": [
+                    "E10A_21",
+                    "E10B_21",
+                    "JV458",
+                    "JV464",
+                    "V3317"
+                  ],
+                  "modules": [
+                    "1992_core::Section F: Employment of Respondent (Part 3)",
+                    "1992_core::Section H: Job History (Part 2)",
+                    "1994_core::Section H: Job History",
+                    "2021_hrs_perspectives_on_the_pandemic_combined_spring_and_fall_mail_survey::E",
+                    "2004_core::V"
+                  ],
+                  "truncated": false
+                }
+              ]
+            }
+          ]
+        },
+        "outcome": {
+          "doc_intent": "memory recall",
+          "expectations": [
+            {
+              "pattern": "MEMORY|RECALL",
+              "via_doc_intent": [
+                "FOUND_TOPK",
+                {
+                  "matching_in_catalog": 1754,
+                  "in_candidates": 433,
+                  "examples": [
+                    "HD101",
+                    "HD102",
+                    "HD182M1",
+                    "HD182M10",
+                    "HD182M2"
+                  ],
+                  "modules": [
+                    "cross_wave_imputation_of_cognitive_functioning_measures_1992_2022::A",
+                    "2006_core::D",
+                    "2004_core::D",
+                    "2008_core::RC",
+                    "2014_core::RC"
+                  ],
+                  "truncated": true
+                }
+              ],
+              "via_runtime_intent": [
+                "FOUND_TOPK",
+                {
+                  "matching_in_catalog": 1754,
+                  "in_candidates": 201,
+                  "examples": [
+                    "AFAPF",
+                    "AFAPM",
+                    "AFDXSPECCDF",
+                    "AFDXSPECCDM",
+                    "AFMMF"
+                  ],
+                  "modules": [
+                    "vbs_2016_flow_cytometry_codebook::A",
+                    "2022_harmonized_cognitive_assessment_protocol_hcap_respondent_and_informant_data::HP",
+                    "2016_harmonized_cognitive_assessment_protocol_hcap_respondent_and_informant_data::HP",
+                    "the_aging_demographics_and_memory_study_adams_wave_a::AF",
+                    "the_aging_demographics_and_memory_study_adams_wave_b::BF"
+                  ],
+                  "truncated": false
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "doc_checks": [],
+      "runtime_run": {
+        "status": "ok",
+        "roles": {
+          "exposure": {
+            "status": "ok",
+            "modules": [
+              "1992_core::Section F: Employment of Respondent (Part 3)",
+              "1992_core::Section H: Job History (Part 2)",
+              "1994_core::Section H: Job History",
+              "2021_hrs_perspectives_on_the_pandemic_combined_spring_and_fall_mail_survey::E",
+              "2004_core::V"
+            ],
+            "candidates": 689,
+            "selected": [
+              "V3310",
+              "V3317",
+              "E10B_21",
+              "V13334",
+              "V3211",
+              "V3212",
+              "V3214",
+              "V3232"
+            ]
+          },
+          "outcome": {
+            "status": "ok",
+            "modules": [
+              "vbs_2016_flow_cytometry_codebook::A",
+              "2022_harmonized_cognitive_assessment_protocol_hcap_respondent_and_informant_data::HP",
+              "2016_harmonized_cognitive_assessment_protocol_hcap_respondent_and_informant_data::HP",
+              "the_aging_demographics_and_memory_study_adams_wave_a::AF",
+              "the_aging_demographics_and_memory_study_adams_wave_b::BF"
+            ],
+            "candidates": 1069,
+            "selected": [
+              "AFAPF",
+              "AFAPM",
+              "AFMMF",
+              "AFMMM",
+              "AFWRF",
+              "AFWRM",
+              "BFAPF",
+              "BFAPM"
+            ]
+          }
+        },
+        "limitations": [
+          "offline_llm"
+        ]
+      }
+    },
+    {
+      "id": "3.1",
+      "question": "How do epigenetic aging clocks (like GrimAge) correlate with daily smartphone usage in older adults?",
+      "runtime_intents": {
+        "exposure": "epigenetic aging clocks (like GrimAge) correlate with daily smartphone usage in older adults",
+        "population": "older adults"
+      },
+      "roles": {
+        "exposure": {
+          "doc_intent": "daily smartphone usage mobile phone",
+          "expectations": [
+            {
+              "pattern": "SMARTPHONE|SMART PHONE|CELL ?PHONE|MOBILE",
+              "via_doc_intent": [
+                "FOUND_TOPK",
+                {
+                  "matching_in_catalog": 113,
+                  "in_candidates": 21,
+                  "examples": [
+                    "T014",
+                    "T077",
+                    "T078",
+                    "V619C",
+                    "V619D"
+                  ],
+                  "modules": [
+                    "1992_hrs_core_imputations::D",
+                    "the_aging_demographics_and_memory_study_adams_wave_a::AC",
+                    "2004_hrs_exit::IO",
+                    "the_aging_demographics_and_memory_study_adams_wave_b::BC",
+                    "2004_hrs_exit::D"
+                  ],
+                  "truncated": false
+                }
+              ],
+              "via_runtime_intent": [
+                "FOUND_TOPK",
+                {
+                  "matching_in_catalog": 113,
+                  "in_candidates": 4,
+                  "examples": [
+                    "RLB038_4",
+                    "RLB038_5",
+                    "SLB038_4",
+                    "SLB038_5"
+                  ],
+                  "modules": [
+                    "hrs_epigenetic_clocks_codebook::A",
+                    "2022_core::LB",
+                    "2020_core::LB",
+                    "2018_core::LB",
+                    "2014_core::LB"
+                  ],
+                  "truncated": true
+                }
+              ]
+            }
+          ]
+        },
+        "outcome": {
+          "doc_intent": "epigenetic aging clock GrimAge DNA methylation",
+          "expectations": [
+            {
+              "pattern": "GRIMAGE|EPIGENET|METHYLAT",
+              "via_doc_intent": [
+                "FOUND_TOPK",
+                {
+                  "matching_in_catalog": 2,
+                  "in_candidates": 1,
+                  "examples": [
+                    "DNAMGRIMAGE"
+                  ],
+                  "modules": [
+                    "hrs_epigenetic_clocks_codebook::A",
+                    "vbs_2016_sub_sample_data::A",
+                    "the_aging_demographics_and_memory_study_adams_wave_b::BN",
+                    "the_aging_demographics_and_memory_study_adams_wave_c::CN",
+                    "the_aging_demographics_and_memory_study_adams_wave_d::DN"
+                  ],
+                  "truncated": false
+                }
+              ],
+              "via_runtime_intent": [
+                "NO_RUNTIME_INTENT",
+                {}
+              ]
+            }
+          ]
+        }
+      },
+      "doc_checks": [],
+      "runtime_run": {
+        "status": "ok",
+        "roles": {
+          "exposure": {
+            "status": "ok",
+            "modules": [
+              "hrs_epigenetic_clocks_codebook::A",
+              "2022_core::LB",
+              "2020_core::LB",
+              "2018_core::LB",
+              "2014_core::LB"
+            ],
+            "candidates": 2000,
+            "selected": [
+              "KLB035B",
+              "LLB035B",
+              "LLB039C",
+              "MLB035B",
+              "MLB039C",
+              "NLB035B",
+              "NLB039C",
+              "PLB028B6"
+            ]
+          },
+          "population": {
+            "status": "no_selection",
+            "modules": [
+              "2011_health_care_mail_survey_hcms::B",
+              "1992_core::Section E, not to the Primary R",
+              "2022_core::V",
+              "2000_core::A",
+              "2014_core::C"
+            ],
+            "candidates": 2000,
+            "selected": []
+          }
+        },
+        "limitations": [
+          "candidates_truncated",
+          "no_grounded_selection",
+          "candidates_truncated",
+          "offline_llm"
+        ]
+      }
+    },
+    {
+      "id": "3.2",
+      "question": "Does localized air pollution (PM2.5) exposure drive early-onset dementia?",
+      "runtime_intents": {
+        "exposure": "localized air pollution (PM2.5) exposure",
+        "outcome": "early-onset dementia"
+      },
+      "roles": {
+        "exposure": {
+          "doc_intent": "localized air pollution PM2.5 fine particulate matter",
+          "expectations": [
+            {
+              "pattern": "PM ?2\\.5|POLLUT|PARTICULATE",
+              "via_doc_intent": [
+                "ABSENT",
+                {
+                  "matching_in_catalog": 0
+                }
+              ],
+              "via_runtime_intent": [
+                "ABSENT",
+                {
+                  "matching_in_catalog": 0
+                }
+              ]
+            }
+          ]
+        },
+        "outcome": {
+          "doc_intent": "early onset dementia Alzheimer",
+          "expectations": [
+            {
+              "pattern": "DEMENTIA|ALZHEIMER",
+              "via_doc_intent": [
+                "FOUND_TOPK",
+                {
+                  "matching_in_catalog": 441,
+                  "in_candidates": 184,
+                  "examples": [
+                    "A5_01AD2NA_IGAP19",
+                    "A5_01AD2WA_IGAP19",
+                    "A5_01ADNA_IGAP13",
+                    "A5_01ADWA_IGAP13",
+                    "A5_01ALZNA_PGC21"
+                  ],
+                  "modules": [
+                    "polygenic_score_data_pgs_codebook::H",
+                    "polygenic_score_data_pgs_codebook::A",
+                    "polygenic_score_data_pgs_codebook::E",
+                    "the_aging_demographics_and_memory_study_adams_wave_a::AJ",
+                    "the_aging_demographics_and_memory_study_adams_wave_b::BJ"
+                  ],
+                  "truncated": false
+                }
+              ],
+              "via_runtime_intent": [
+                "FOUND_TOPK",
+                {
+                  "matching_in_catalog": 441,
+                  "in_candidates": 284,
+                  "examples": [
+                    "ADBLCOMM",
+                    "ADBLCP",
+                    "ADHACH1",
+                    "ADONSET",
+                    "AJA1"
+                  ],
+                  "modules": [
+                    "the_aging_demographics_and_memory_study_adams_wave_a::AJ",
+                    "the_aging_demographics_and_memory_study_adams_wave_b::BJ",
+                    "the_aging_demographics_and_memory_study_adams_wave_c::CJ",
+                    "the_aging_demographics_and_memory_study_adams_wave_d::DJ",
+                    "the_aging_demographics_and_memory_study_adams_wave_a::AD"
+                  ],
+                  "truncated": false
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "doc_checks": [],
+      "runtime_run": {
+        "status": "ok",
+        "roles": {
+          "exposure": {
+            "status": "ok",
+            "modules": [
+              "1992_core::Section L: Cognition",
+              "1992_core::Section H: Job History (Part 2)",
+              "2016_core::V",
+              "1994_core::Section H: Job History",
+              "1994_core::"
+            ],
+            "candidates": 962,
+            "selected": [
+              "PV160",
+              "V3933",
+              "V5110",
+              "W7280",
+              "W9274"
+            ]
+          },
+          "outcome": {
+            "status": "ok",
+            "modules": [
+              "the_aging_demographics_and_memory_study_adams_wave_a::AJ",
+              "the_aging_demographics_and_memory_study_adams_wave_b::BJ",
+              "the_aging_demographics_and_memory_study_adams_wave_c::CJ",
+              "the_aging_demographics_and_memory_study_adams_wave_d::DJ",
+              "the_aging_demographics_and_memory_study_adams_wave_a::AD"
+            ],
+            "candidates": 1223,
+            "selected": [
+              "ADONSET",
+              "ADHACH1",
+              "ADBLCOMM",
+              "ADBLCP",
+              "AJCHKDONE",
+              "BJCHKDONE",
+              "CJCHKDONE",
+              "DJCHKDONE"
+            ]
+          }
+        },
+        "limitations": [
+          "offline_llm"
+        ]
+      }
+    },
+    {
+      "id": "3.3",
+      "question": "Is the balance between monocytes and protective cholesterol predicting survival?",
+      "runtime_intents": {
+        "exposure": "balance between monocytes",
+        "outcome": "protective cholesterol predicting survival"
+      },
+      "roles": {
+        "exposure": {
+          "doc_intent": "monocytes HDL protective cholesterol biomarkers",
+          "expectations": [
+            {
+              "pattern": "MONOCYTE|HDL",
+              "via_doc_intent": [
+                "FOUND_TOPK",
+                {
+                  "matching_in_catalog": 26,
+                  "in_candidates": 14,
+                  "examples": [
+                    "KHDLBIOS",
+                    "KHDL_ADJ",
+                    "LHDLBIOS",
+                    "LHDLBIOS_ADJ",
+                    "LHDLUW"
+                  ],
+                  "modules": [
+                    "2008_biomarker_data::BL",
+                    "2010_biomarker_data::BL",
+                    "2012_biomarker_data::BL",
+                    "2006_biomarker_data::BL",
+                    "2016_venous_blood_study_vbs::A"
+                  ],
+                  "truncated": false
+                }
+              ],
+              "via_runtime_intent": [
+                "FOUND_TOPK",
+                {
+                  "matching_in_catalog": 26,
+                  "in_candidates": 9,
+                  "examples": [
+                    "PAMON",
+                    "PHDLD",
+                    "PMONO",
+                    "PMONO16MINUS_COUNT",
+                    "PMONO16MINUS_PCT"
+                  ],
+                  "modules": [
+                    "vbs_2016_flow_cytometry_codebook::A",
+                    "2016_venous_blood_study_vbs::A",
+                    "2018_hrs_exit::B",
+                    "2020_hrs_exit::B",
+                    "2022_hrs_exit::B"
+                  ],
+                  "truncated": false
+                }
+              ]
+            }
+          ]
+        },
+        "outcome": {
+          "doc_intent": "survival mortality death",
+          "expectations": [
+            {
+              "pattern": "YEAR OF DEATH|VITAL STATUS|DEATH|DECEASED",
+              "via_doc_intent": [
+                "FOUND_TOPK",
+                {
+                  "matching_in_catalog": 1384,
+                  "in_candidates": 867,
+                  "examples": [
+                    "HS003_1",
+                    "HS003_2",
+                    "HS003_3",
+                    "HS003_4",
+                    "HS004_1"
+                  ],
+                  "modules": [
+                    "2008_core::P",
+                    "2008_core::S",
+                    "2002_core::S",
+                    "2022_core::S",
+                    "2012_core::S"
+                  ],
+                  "truncated": false
+                }
+              ],
+              "via_runtime_intent": [
+                "REACHABLE_DEEPER",
+                {
+                  "matching_in_catalog": 1384,
+                  "best_module_rank": 9,
+                  "examples": [
+                    "EXDEATHMO",
+                    "EXDEATHYR",
+                    "EXDODSOURCE",
+                    "KNOWNDECEASEDMO",
+                    "KNOWNDECEASEDSOURCE"
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "doc_checks": [],
+      "runtime_run": {
+        "status": "ok",
+        "roles": {
+          "exposure": {
+            "status": "ok",
+            "modules": [
+              "vbs_2016_flow_cytometry_codebook::A",
+              "2016_venous_blood_study_vbs::A",
+              "2018_hrs_exit::B",
+              "2020_hrs_exit::B",
+              "2022_hrs_exit::B"
+            ],
+            "candidates": 155,
+            "selected": [
+              "PMONO",
+              "PMONO16MINUS_COUNT",
+              "PMONO16MINUS_PCT",
+              "PMONO16PLUS_COUNT",
+              "PMONO16PLUS_PCT",
+              "PMONO_COUNT",
+              "PMONO_PCT"
+            ]
+          },
+          "outcome": {
+            "status": "ok",
+            "modules": [
+              "2008_core::P",
+              "2008_biomarker_data::BL",
+              "2003_diabetes_study_codebook::A",
+              "2016_venous_blood_study_vbs::A",
+              "2007_disability_vignette_survey_dvs_codebook::DVS"
+            ],
+            "candidates": 724,
+            "selected": [
+              "PCHOL",
+              "PHDLD",
+              "PLDLC",
+              "QXH20",
+              "QXH21",
+              "QXH22",
+              "A32_07",
+              "B28_07"
+            ]
+          }
+        },
+        "limitations": [
+          "offline_llm"
+        ]
+      }
+    }
+  ]
+}

@@ -4,8 +4,14 @@
   "type": "object",
   "properties": {
     "question": {
-      "type": "string"
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 2000,
+      "description": "Natural-language research question. Whitespace is trimmed; blank strings are rejected."
     }
   },
-  "required": ["question"]
+  "required": [
+    "question"
+  ],
+  "additionalProperties": false
 }
