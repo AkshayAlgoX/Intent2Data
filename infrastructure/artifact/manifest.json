@@ -1,0 +1,15 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "manifest_version": "1.0.0",
+  "artifact": {
+    "filename": "runtime_index.json.gz",
+    "format": "runtime_index_v1",
+    "runtime_fingerprint": "ad858fde4e28f02e",
+    "sha256": "8c1cdf86cef7aa4b143aae8a368efdf4b5af872089aa3e93b6cece64db0bba9f"
+  },
+  "source_data_policy": {
+    "raw_metadata_source": "benchmark/HRS_metadata/metadata.jsonl",
+    "deployable": false,
+    "notes": "The raw benchmark/HRS_metadata/metadata.jsonl is NOT a deployable artifact and must remain outside Git and outside the Docker image."
+  }
+}

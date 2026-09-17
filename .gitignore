@@ -8,3 +8,18 @@ env/
 .pytest_cache/
 .env.local
 backend/.cache/
+
+# AWS CDK / Node
+node_modules/
+cdk.out/
+dist/
+*.tsbuildinfo
+infrastructure/cdk/node_modules/
+infrastructure/cdk/cdk.out/
+infrastructure/cdk/dist/
+infrastructure/cdk/*.js
+infrastructure/cdk/**/*.js
+infrastructure/cdk/*.d.ts
+infrastructure/cdk/**/*.d.ts
+infrastructure/cdk/*.tsbuildinfo
+!infrastructure/cdk/jest.config.js
