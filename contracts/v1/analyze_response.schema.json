@@ -1,0 +1,542 @@
+{
+  "$defs": {
+    "CandidateStats": {
+      "properties": {
+        "retrieved": {
+          "title": "Retrieved",
+          "type": "integer"
+        },
+        "family_expanded": {
+          "title": "Family Expanded",
+          "type": "integer"
+        },
+        "total": {
+          "title": "Total",
+          "type": "integer"
+        },
+        "truncated": {
+          "title": "Truncated",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "retrieved",
+        "family_expanded",
+        "total",
+        "truncated"
+      ],
+      "title": "CandidateStats",
+      "type": "object"
+    },
+    "Grounding": {
+      "properties": {
+        "in_context": {
+          "title": "In Context",
+          "type": "boolean"
+        },
+        "evidence_grounded": {
+          "title": "Evidence Grounded",
+          "type": "boolean"
+        },
+        "evidence_checked": {
+          "title": "Evidence Checked",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "in_context",
+        "evidence_grounded",
+        "evidence_checked"
+      ],
+      "title": "Grounding",
+      "type": "object"
+    },
+    "IndexInfo": {
+      "properties": {
+        "variables": {
+          "title": "Variables",
+          "type": "integer"
+        },
+        "modules": {
+          "title": "Modules",
+          "type": "integer"
+        },
+        "families": {
+          "title": "Families",
+          "type": "integer"
+        },
+        "fingerprint": {
+          "title": "Fingerprint",
+          "type": "string"
+        }
+      },
+      "required": [
+        "variables",
+        "modules",
+        "families",
+        "fingerprint"
+      ],
+      "title": "IndexInfo",
+      "type": "object"
+    },
+    "Intent": {
+      "properties": {
+        "roles": {
+          "items": {
+            "$ref": "#/$defs/IntentRole"
+          },
+          "title": "Roles",
+          "type": "array"
+        },
+        "source": {
+          "default": "llm",
+          "title": "Source",
+          "type": "string"
+        },
+        "errors": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Errors",
+          "type": "array"
+        }
+      },
+      "required": [
+        "roles"
+      ],
+      "title": "Intent",
+      "type": "object"
+    },
+    "IntentRole": {
+      "properties": {
+        "role": {
+          "title": "Role",
+          "type": "string"
+        },
+        "intent": {
+          "title": "Intent",
+          "type": "string"
+        }
+      },
+      "required": [
+        "role",
+        "intent"
+      ],
+      "title": "IntentRole",
+      "type": "object"
+    },
+    "LLMInfo": {
+      "properties": {
+        "provider": {
+          "title": "Provider",
+          "type": "string"
+        },
+        "model": {
+          "title": "Model",
+          "type": "string"
+        },
+        "live": {
+          "title": "Live",
+          "type": "boolean"
+        },
+        "calls": {
+          "title": "Calls",
+          "type": "integer"
+        },
+        "failed_calls": {
+          "title": "Failed Calls",
+          "type": "integer"
+        },
+        "retries": {
+          "default": 0,
+          "title": "Retries",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "provider",
+        "model",
+        "live",
+        "calls",
+        "failed_calls"
+      ],
+      "title": "LLMInfo",
+      "type": "object"
+    },
+    "Limitation": {
+      "properties": {
+        "code": {
+          "title": "Code",
+          "type": "string"
+        },
+        "role": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Role"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        }
+      },
+      "required": [
+        "code",
+        "message"
+      ],
+      "title": "Limitation",
+      "type": "object"
+    },
+    "ModuleRef": {
+      "properties": {
+        "module_id": {
+          "title": "Module Id",
+          "type": "string"
+        },
+        "rank": {
+          "title": "Rank",
+          "type": "integer"
+        },
+        "score": {
+          "title": "Score",
+          "type": "number"
+        },
+        "product_key": {
+          "title": "Product Key",
+          "type": "string"
+        },
+        "product_title": {
+          "title": "Product Title",
+          "type": "string"
+        },
+        "section": {
+          "title": "Section",
+          "type": "string"
+        },
+        "section_title": {
+          "title": "Section Title",
+          "type": "string"
+        },
+        "variable_count": {
+          "title": "Variable Count",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "module_id",
+        "rank",
+        "score",
+        "product_key",
+        "product_title",
+        "section",
+        "section_title",
+        "variable_count"
+      ],
+      "title": "ModuleRef",
+      "type": "object"
+    },
+    "Rejected": {
+      "properties": {
+        "out_of_context": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Out Of Context",
+          "type": "array"
+        },
+        "hallucinated": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Hallucinated",
+          "type": "array"
+        },
+        "parse_errors": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Parse Errors",
+          "type": "array"
+        },
+        "over_limit": {
+          "default": 0,
+          "title": "Over Limit",
+          "type": "integer"
+        }
+      },
+      "title": "Rejected",
+      "type": "object"
+    },
+    "RoleResult": {
+      "properties": {
+        "role": {
+          "title": "Role",
+          "type": "string"
+        },
+        "intent": {
+          "title": "Intent",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "ok",
+            "no_selection",
+            "empty_retrieval",
+            "failed"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "modules": {
+          "items": {
+            "$ref": "#/$defs/ModuleRef"
+          },
+          "title": "Modules",
+          "type": "array"
+        },
+        "candidates": {
+          "$ref": "#/$defs/CandidateStats"
+        },
+        "selections": {
+          "items": {
+            "$ref": "#/$defs/SelectedVariable"
+          },
+          "title": "Selections",
+          "type": "array"
+        },
+        "rejected": {
+          "$ref": "#/$defs/Rejected"
+        },
+        "error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Error"
+        }
+      },
+      "required": [
+        "role",
+        "intent",
+        "status",
+        "modules",
+        "candidates",
+        "selections",
+        "rejected"
+      ],
+      "title": "RoleResult",
+      "type": "object"
+    },
+    "SelectedVariable": {
+      "properties": {
+        "code": {
+          "title": "Code",
+          "type": "string"
+        },
+        "label": {
+          "title": "Label",
+          "type": "string"
+        },
+        "module_id": {
+          "title": "Module Id",
+          "type": "string"
+        },
+        "section": {
+          "title": "Section",
+          "type": "string"
+        },
+        "year": {
+          "title": "Year",
+          "type": "string"
+        },
+        "family_id": {
+          "title": "Family Id",
+          "type": "string"
+        },
+        "family_waves": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Family Waves",
+          "type": "array"
+        },
+        "candidate_source": {
+          "title": "Candidate Source",
+          "type": "string"
+        },
+        "reason": {
+          "title": "Reason",
+          "type": "string"
+        },
+        "evidence": {
+          "title": "Evidence",
+          "type": "string"
+        },
+        "grounding": {
+          "$ref": "#/$defs/Grounding"
+        }
+      },
+      "required": [
+        "code",
+        "label",
+        "module_id",
+        "section",
+        "year",
+        "family_id",
+        "family_waves",
+        "candidate_source",
+        "reason",
+        "evidence",
+        "grounding"
+      ],
+      "title": "SelectedVariable",
+      "type": "object"
+    },
+    "StageTiming": {
+      "properties": {
+        "ms": {
+          "title": "Ms",
+          "type": "number"
+        },
+        "detail": {
+          "additionalProperties": true,
+          "title": "Detail",
+          "type": "object"
+        }
+      },
+      "required": [
+        "ms"
+      ],
+      "title": "StageTiming",
+      "type": "object"
+    },
+    "VariableSummary": {
+      "properties": {
+        "code": {
+          "title": "Code",
+          "type": "string"
+        },
+        "label": {
+          "title": "Label",
+          "type": "string"
+        },
+        "module_id": {
+          "title": "Module Id",
+          "type": "string"
+        },
+        "year": {
+          "title": "Year",
+          "type": "string"
+        },
+        "family_id": {
+          "title": "Family Id",
+          "type": "string"
+        },
+        "roles": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Roles",
+          "type": "array"
+        }
+      },
+      "required": [
+        "code",
+        "label",
+        "module_id",
+        "year",
+        "family_id",
+        "roles"
+      ],
+      "title": "VariableSummary",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "contract": {
+      "default": "v1",
+      "title": "Contract",
+      "type": "string"
+    },
+    "request_id": {
+      "title": "Request Id",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "ok",
+        "partial",
+        "failed"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "question": {
+      "title": "Question",
+      "type": "string"
+    },
+    "intent": {
+      "$ref": "#/$defs/Intent"
+    },
+    "roles": {
+      "items": {
+        "$ref": "#/$defs/RoleResult"
+      },
+      "title": "Roles",
+      "type": "array"
+    },
+    "variables": {
+      "items": {
+        "$ref": "#/$defs/VariableSummary"
+      },
+      "title": "Variables",
+      "type": "array"
+    },
+    "limitations": {
+      "items": {
+        "$ref": "#/$defs/Limitation"
+      },
+      "title": "Limitations",
+      "type": "array"
+    },
+    "stages": {
+      "additionalProperties": {
+        "$ref": "#/$defs/StageTiming"
+      },
+      "title": "Stages",
+      "type": "object"
+    },
+    "llm": {
+      "$ref": "#/$defs/LLMInfo"
+    },
+    "index": {
+      "$ref": "#/$defs/IndexInfo"
+    }
+  },
+  "required": [
+    "request_id",
+    "status",
+    "question",
+    "intent",
+    "roles",
+    "variables",
+    "limitations",
+    "stages",
+    "llm",
+    "index"
+  ],
+  "title": "AnalyzeResponse",
+  "type": "object",
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

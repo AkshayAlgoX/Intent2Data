@@ -6,3 +6,5 @@ venv/
 .venv/
 env/
 .pytest_cache/
+.env.local
+backend/.cache/

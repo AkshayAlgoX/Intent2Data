@@ -1,3 +1,5 @@
+> **Provenance note (see `docs/SCIENTIFIC_CLAIMS.md`).** The "validation" in this file was performed with `validate_demo.py`: offline module BM25 retrieval plus a *label-substring check* standing in for the LLM. **No language model was run.** Statements about what "the LLM will" do are expectations, not results. Metric labels: [MEASURED OFFLINE], [STRUCTURAL REACHABILITY], [SIMULATION / PROJECTION], [LIVE RESULT: none].
+
 # Canonical Demo Candidates
 
 ## Category Q1: Obvious Mapping
@@ -22,7 +24,7 @@
 4. **Expected role(s):** Exposure (education), Outcome (income).
 5. **Why it is suitable for the demo:** Very standard econometric analysis.
 6. **Why it demonstrates Intent2Data:** Validates demographic extraction.
-7. **Expected module/structural behavior:** Found in demographic and financial sections.
+7. **Expected module/structural behavior:** Found in demographic and financial sections. **Runtime-validated 2026-09-17** [MEASURED OFFLINE]: education via core `B` (`xB014 R HIGHEST LEVEL OF EDUCATION`) and `core::PR` (`xZ216 R YEARS OF EDUCATION`); income via core imputation modules (`xHHINC HOUSEHOLD INCOME`), all in the top-5 candidate set. RAND variables (`RAEDUC`, `TOT HH INC`) are **not in this catalog** and must not be cited.
 8. **Known limitation/risk:** Income variables can be heavily imputed/complex to merge.
 9. **Safe to use publicly:** Yes.
 10. **Complexity/risk rating:** Low.
@@ -49,9 +51,9 @@
 3. **Relevant concept(s):** Religious involvement, physical functioning.
 4. **Expected role(s):** Exposure (religion), Outcome (physical functioning).
 5. **Why it is suitable for the demo:** "Religion" is structurally localized to specific modules, and the question asks for "lifelong/childhood" specifics.
-6. **Why it demonstrates Intent2Data:** A generic search for "religion" returns hundreds of generic beliefs. Intent2Data grabs the module `2016_core::V` and uses the LLM to surgically extract variables like "HOW OFTEN ATTEND SERVICES DURING CHILDHOOD".
+6. **Why it demonstrates Intent2Data:** A generic search for "religion" returns hundreds of generic beliefs. Intent2Data retrieves the module `2016_core::V` [MEASURED OFFLINE] and asks the LLM to select variables like "HOW OFTEN ATTEND SERVICES DURING CHILDHOOD" (selection behaviour unmeasured).
 7. **Expected module/structural behavior:** LLM parses the `core::V` codebook to find temporal variants.
-8. **Known limitation/risk:** None, it's a proven success case.
+8. **Known limitation/risk:** Module retrieval succeeds offline; LLM selection from this module is not yet measured [LIVE RESULT: none].
 9. **Safe to use publicly:** Yes.
 10. **Complexity/risk rating:** Medium.
 
@@ -61,7 +63,7 @@
 3. **Relevant concept(s):** Functional impairment (ADLs), COVID-19 infection, survival/mortality.
 4. **Expected role(s):** Exposure (functional impairment), Outcome (survival), Covariate (COVID-19 timing).
 5. **Why it is suitable for the demo:** "Survival" does not map lexically to standard survey variables.
-6. **Why it demonstrates Intent2Data:** Standard search for "survival" misses `EXDEATHYR` (Year of Death). Intent2Data retrieves the `tracker::TR` module and uses the LLM to deduce that "Year of Death" and "Vital Status" perfectly operationalize survival.
+6. **Why it demonstrates Intent2Data:** Standard search for "survival" misses `EXDEATHYR` (Year of Death). Intent2Data is expected to retrieve the `tracker::TR` module and ask the LLM whether "Year of Death" and "Vital Status" operationalize survival (expectation; not measured). **Runtime-validated 2026-09-17:** `tracker::TR` ranks 1st for the intent "survival mortality death year vital status" (both `EXDEATHYR` and `QALIVE` in the top-5 candidate set) but is outside the top-50 for the literal phrase "survival outcomes after COVID-19" — usable only with an intent compiler that expands "survival" to mortality vocabulary.
 7. **Expected module/structural behavior:** LLM cross-references the tracker module for mortality variables.
 8. **Known limitation/risk:** The COVID-19 temporal logic adds complexity.
 9. **Safe to use publicly:** Yes.
@@ -112,7 +114,7 @@
 2. **Dataset:** HRS
 3. **Relevant concept(s):** Epigenetic aging (GrimAge), smartphone usage.
 4. **Expected role(s):** Exposure (smartphone usage), Outcome (epigenetic aging).
-5. **Why it is suitable for the demo:** HRS may have some genetic/biomarker data, but "smartphone usage" or specific clock markers might be completely absent or extremely sparse.
+5. **Why it is suitable for the demo:** ~~HRS may have some genetic/biomarker data, but "smartphone usage" or specific clock markers might be completely absent or extremely sparse.~~ **Runtime-validated 2026-09-17: this premise is false** — `NV108 USE SMARTPHONE`, `xLB038_4 OWN SMARTPHONE` and `DNAMGRIMAGE` (epigenetic clocks codebook) all exist and are retrieved in the top-5. **Not a valid limitation demo.**
 6. **Why it demonstrates Intent2Data:** The Operationalization Validator should flag "smartphone usage" as missing or unmeasured, rather than hallucinating a proxy.
 7. **Expected module/structural behavior:** Fails to retrieve a valid module for smartphone usage.
 8. **Known limitation/risk:** The system might accidentally proxy it to "internet usage".
@@ -136,8 +138,8 @@
 2. **Dataset:** HRS
 3. **Relevant concept(s):** Monocytes, protective cholesterol (HDL), survival.
 4. **Expected role(s):** Exposure (Biomarkers), Outcome (Survival).
-5. **Why it is suitable for the demo:** Very specific biomarkers. If the module retrieval step (BM25) fails to rank the specific biomarker module in the Top 10, the LLM will miss it (the known 0.698 reachability ceiling).
-6. **Why it demonstrates Intent2Data:** Perfectly illustrates the "Module Retrieval Reachability" bottleneck. If the keyword "monocytes" doesn't hit a module document strongly enough, the system honestly reports it cannot find the exposure variables.
+5. **Why it is suitable for the demo:** Very specific biomarkers. If the module retrieval step (BM25) fails to rank the specific biomarker module in the Top 10, the LLM cannot see it (module reachability is a hard ceiling: 0.698 macro in the pre-hackathon configuration [STRUCTURAL REACHABILITY]). **Runtime-validated 2026-09-17: the biomarker modules are retrieved in the top-5** (`PMONO` 2016 VBS, `KHDLBIOS` 2006 biomarker), so this question does **not** exhibit the bottleneck it was chosen to show.
+6. **Why it demonstrates Intent2Data:** Illustrates the "Module Retrieval Reachability" bottleneck. If the keyword "monocytes" doesn't hit a module document strongly enough, the system honestly reports it cannot find the exposure variables.
 7. **Expected module/structural behavior:** Tests the limits of the initial BM25 module embedding.
 8. **Known limitation/risk:** Shows a genuine algorithmic limitation of the current v1 pipeline.
 9. **Safe to use publicly:** Yes.

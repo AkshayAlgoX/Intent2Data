@@ -1,4 +1,256 @@
 {
-  "status": "stub",
-  "message": "Intent2Data backend skeleton is running"
+  "contract": "v1",
+  "request_id": "9f1c2e4a0b6d4d5e8a7b3c2d1e0f9a8b",
+  "status": "ok",
+  "question": "Is chronic lung disease associated with feeling depressed?",
+  "intent": {
+    "roles": [
+      {
+        "role": "exposure",
+        "intent": "chronic lung disease"
+      },
+      {
+        "role": "outcome",
+        "intent": "felt depressed past week"
+      }
+    ],
+    "source": "static",
+    "errors": []
+  },
+  "roles": [
+    {
+      "role": "exposure",
+      "intent": "chronic lung disease",
+      "status": "ok",
+      "modules": [
+        {
+          "module_id": "2004_core::C",
+          "rank": 1,
+          "score": 2.070427,
+          "product_key": "2004_core",
+          "product_title": "HRS Core",
+          "section": "C",
+          "section_title": "Section C",
+          "variable_count": 3
+        },
+        {
+          "module_id": "2006_core::C",
+          "rank": 2,
+          "score": 2.070427,
+          "product_key": "2006_core",
+          "product_title": "HRS Core",
+          "section": "C",
+          "section_title": "Section C",
+          "variable_count": 3
+        }
+      ],
+      "candidates": {
+        "retrieved": 6,
+        "family_expanded": 3,
+        "total": 9,
+        "truncated": false
+      },
+      "selections": [
+        {
+          "code": "JC030",
+          "label": "LUNG DISEASE",
+          "module_id": "2004_core::C",
+          "section": "C",
+          "year": "2004",
+          "family_id": "HRS::core::C::label::L-LUNG-DISEASE",
+          "family_waves": [
+            "2004",
+            "2006",
+            "2008"
+          ],
+          "candidate_source": "module",
+          "reason": "doctor-diagnosed chronic lung disease",
+          "evidence": "LUNG DISEASE",
+          "grounding": {
+            "in_context": true,
+            "evidence_grounded": true,
+            "evidence_checked": true
+          }
+        },
+        {
+          "code": "KC030",
+          "label": "LUNG DISEASE",
+          "module_id": "2006_core::C",
+          "section": "C",
+          "year": "2006",
+          "family_id": "HRS::core::C::label::L-LUNG-DISEASE",
+          "family_waves": [
+            "2004",
+            "2006",
+            "2008"
+          ],
+          "candidate_source": "module",
+          "reason": "doctor-diagnosed chronic lung disease",
+          "evidence": "chronic lung disease",
+          "grounding": {
+            "in_context": true,
+            "evidence_grounded": true,
+            "evidence_checked": true
+          }
+        }
+      ],
+      "rejected": {
+        "out_of_context": [],
+        "hallucinated": [],
+        "parse_errors": [],
+        "over_limit": 0
+      },
+      "error": null
+    },
+    {
+      "role": "outcome",
+      "intent": "felt depressed past week",
+      "status": "ok",
+      "modules": [
+        {
+          "module_id": "2004_core::D",
+          "rank": 1,
+          "score": 2.89059,
+          "product_key": "2004_core",
+          "product_title": "HRS Core",
+          "section": "D",
+          "section_title": "Section D",
+          "variable_count": 2
+        },
+        {
+          "module_id": "2006_core::D",
+          "rank": 2,
+          "score": 2.89059,
+          "product_key": "2006_core",
+          "product_title": "HRS Core",
+          "section": "D",
+          "section_title": "Section D",
+          "variable_count": 2
+        }
+      ],
+      "candidates": {
+        "retrieved": 4,
+        "family_expanded": 2,
+        "total": 6,
+        "truncated": false
+      },
+      "selections": [
+        {
+          "code": "LD110",
+          "label": "FELT DEPRESSED",
+          "module_id": "2008_core::D",
+          "section": "D",
+          "year": "2008",
+          "family_id": "HRS::core::D::label::L-FELT-DEPRESSED",
+          "family_waves": [
+            "2004",
+            "2006",
+            "2008"
+          ],
+          "candidate_source": "family",
+          "reason": "CES-D item",
+          "evidence": "FELT DEPRESSED",
+          "grounding": {
+            "in_context": true,
+            "evidence_grounded": true,
+            "evidence_checked": true
+          }
+        }
+      ],
+      "rejected": {
+        "out_of_context": [],
+        "hallucinated": [],
+        "parse_errors": [],
+        "over_limit": 0
+      },
+      "error": null
+    }
+  ],
+  "variables": [
+    {
+      "code": "JC030",
+      "label": "LUNG DISEASE",
+      "module_id": "2004_core::C",
+      "year": "2004",
+      "family_id": "HRS::core::C::label::L-LUNG-DISEASE",
+      "roles": [
+        "exposure"
+      ]
+    },
+    {
+      "code": "KC030",
+      "label": "LUNG DISEASE",
+      "module_id": "2006_core::C",
+      "year": "2006",
+      "family_id": "HRS::core::C::label::L-LUNG-DISEASE",
+      "roles": [
+        "exposure"
+      ]
+    },
+    {
+      "code": "LD110",
+      "label": "FELT DEPRESSED",
+      "module_id": "2008_core::D",
+      "year": "2008",
+      "family_id": "HRS::core::D::label::L-FELT-DEPRESSED",
+      "roles": [
+        "outcome"
+      ]
+    }
+  ],
+  "limitations": [
+    {
+      "code": "offline_llm",
+      "role": null,
+      "message": "Selections were produced by a deterministic offline stand-in, not a language model. This run demonstrates pipeline behaviour, not model quality."
+    }
+  ],
+  "stages": {
+    "intent": {
+      "ms": 0.05,
+      "detail": {
+        "roles": 2
+      }
+    },
+    "retrieval": {
+      "ms": 0.1,
+      "detail": {
+        "candidates_per_role": {
+          "exposure": 9,
+          "outcome": 6
+        },
+        "modules_per_role": {
+          "exposure": 2,
+          "outcome": 2
+        }
+      }
+    },
+    "filter": {
+      "ms": 0.21,
+      "detail": {
+        "calls": 2,
+        "failed": 0
+      }
+    },
+    "validation": {
+      "ms": 0.03,
+      "detail": {
+        "limitations": 1
+      }
+    }
+  },
+  "llm": {
+    "provider": "static",
+    "model": "static",
+    "live": false,
+    "calls": 3,
+    "failed_calls": 0,
+    "retries": 0
+  },
+  "index": {
+    "variables": 22,
+    "modules": 10,
+    "families": 8,
+    "fingerprint": "709c9294d2257045"
+  }
 }

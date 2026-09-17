@@ -1,29 +1,39 @@
 # Project Overview: Intent2Data
 
+> All numbers below carry a label defined in `docs/SCIENTIFIC_CLAIMS.md`, which is the single source of truth for what has and has not been shown. **No live LLM result exists yet.**
+
 ## 1. Problem
-Traditional variable-level retrieval (like BM25 or dense embeddings) suffers from semantic mismatch and term dilution. When searching for broad concepts like "survival", highly specific variables like "year of death" are often buried or missed.
+Traditional variable-level retrieval (BM25 or dense embeddings) suffers from semantic mismatch and, in longitudinal codebooks, from series fragmentation: the same item recurs in every survey wave under a different code, so a flat retriever must find each copy independently. When searching for broad concepts like "survival", specific variables like "year of death" are often buried or missed.
 
 ## 2. Technical Hypothesis
-Variable-level retrieval is fundamentally flawed for complex datasets. Structural module retrieval combined with LLM context filtering substantially improves variable discovery by relying on dataset structures (modules) rather than individual variable labels.
+Variable-level retrieval is a weak fit for structured longitudinal codebooks. We hypothesise that structural module retrieval, cross-wave family expansion, and LLM context filtering together improve variable discovery by relying on dataset structure (modules, wave families) rather than individual variable labels. The retrieval part of this hypothesis has offline support (§4); the LLM part is untested (§5).
 
 ## 3. Intent2Data Architecture
-- **Intent Decomposition:** Extract roles from the research question.
-- **Module Retrieval:** Embed and retrieve full dataset sections (modules) instead of single variables.
-- **LLM Context Filtering:** Pass the full module codebook to an LLM to surgically extract variables, avoiding term dilution.
-- **Operationalization Validator:** Cross-check candidates for proxy errors, population mismatch, etc.
+- **Intent Decomposition:** Extract search roles (exposure, outcome, population, covariates, secondary, temporal, proxies) from the research question.
+- **Module Retrieval:** Retrieve whole codebook sections (modules = one survey wave × one section) instead of single variables.
+- **Wave-Family Expansion:** Add every cross-wave sibling of the retrieved variables (deterministic, metadata-only).
+- **LLM Context Filtering:** Show the module's variables to an LLM and ask it to select those that operationalize the role's concept.
+- **Grounding Validation:** Keep only selections that were in the shown candidate set; check that cited evidence is a verbatim codebook span; report gaps.
 
-## 4. Current Evidence (Prior Research)
-- BM25 Recall@5R: 0.184
-- Operationalization-aware retrieval: 0.304
-- Module + LLM Context Filter: 0.593
-- Full Intent2Data prototype: 0.649 Recall@5R
-*(Note: These are our measured results under our evaluation setup, not official leaderboard scores.)*
+## 4. Current Evidence (offline, no language model involved)
+Population: 20 intent-annotated OADD-Bench questions (HRS), 621 gold variable labels, unless stated.
 
-## 5. Current Limitation
-Module retrieval reachability ceilings at roughly 0.698 in our evaluation. If the module is not retrieved, the variable cannot be found.
+| Result | Label |
+|---|---|
+| Single-query BM25 Recall@5R 0.184 → role-aware BM25 0.304 (pre-hackathon, macro-averaged, benchmark temporal filter applied) | [MEASURED OFFLINE] |
+| Module top-5 per role: 205/621 gold present in candidates (0.330) | [STRUCTURAL REACHABILITY] |
+| + cross-wave family expansion (the runtime's configuration): 343/621 (0.552) | [STRUCTURAL REACHABILITY] |
+| Role sharding: 0 reachable gold lost, −81 % candidates per call | [STRUCTURAL REACHABILITY] |
+| Pre-hackathon projection: 0.698 reachability × assumed 0.85 / 0.93 extraction efficiency = 0.593 / 0.649 | [SIMULATION / PROJECTION] — **not a measurement** |
+
+## 5. Current Limitations
+- Module reachability is a hard ceiling: if the module is not retrieved, the variable cannot be found. Pre-hackathon macro reachability was about 0.698 [STRUCTURAL REACHABILITY]; the runtime's configuration reaches 0.552 micro on the same questions (different metric; see `SCIENTIFIC_CLAIMS.md` §1).
+- **Live LLM selection has not been measured** [LIVE RESULT: none]. Five attempts were blocked by provider quota; Exp24 is staged.
+- Wave-family expansion is demonstrated on HRS only; it is a blueprint for other longitudinal datasets, not a demonstrated general method.
+- Intent2Data maps concepts to variables; it does not perform or validate causal inference.
 
 ## 6. Pre-Event Research
-The architectural experiments, benchmarks, and prior iterations of the OADD pipeline were completed before this hackathon began. They serve as the design foundation.
+The retrieval experiments, benchmarks, and the pre-hackathon simulation were completed before this hackathon began. They serve as the design foundation; see `docs/RESEARCH_HISTORY.md`.
 
 ## 7. Hackathon Implementation
-This repository represents the clean, production-ready backend built exclusively during the hackathon build window, implementing the verified architecture.
+This repository contains the backend built during the hackathon build window. It implements the offline-validated retrieval design end to end (pipeline functionality, exercised on the real codebook index with a deterministic offline stand-in); its LLM stages are implemented behind a provider-agnostic boundary and remain unvalidated.
