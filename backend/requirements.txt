@@ -1,5 +1,7 @@
-fastapi
-uvicorn
-pytest
-httpx
-pydantic
+# Runtime dependencies (direct only; pinned to the versions the suite is verified against).
+fastapi==0.141.1
+uvicorn==0.53.0
+pydantic==2.13.5
+# Gemini provider adapter (app/llm/gemini.py). Imported lazily; declared here so a
+# clean environment/container can use INTENT2DATA_LLM_PROVIDER=gemini.
+google-genai==2.24.0

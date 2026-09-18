@@ -1,3 +1,4 @@
+import json
 import logging
 import os
 import uuid
@@ -8,7 +9,7 @@ from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from app.pipeline.models import AnalyzeResponse
 from app.pipeline.orchestrator import PipelineError
@@ -30,7 +31,13 @@ REQUEST_ID_HEADER = "X-Request-ID"
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Index + LLM client are built once here, never in the request path.
-    app.state.runtime = load_runtime(Settings.from_env())
+    # With INTENT2DATA_REQUIRE_INDEX=1 a missing artifact raises RuntimeNotReady
+    # and the server refuses to start (deliberate, logged failure).
+    settings = Settings.from_env()
+    if "*" in _cors_origins:
+        logger.warning("CORS allows any origin; set INTENT2DATA_CORS_ORIGINS to restrict in production")
+    app.state.runtime = load_runtime(settings)
+    app.state.max_request_bytes = settings.max_request_bytes
     yield
 
 
@@ -52,6 +59,10 @@ app.add_middleware(
 
 
 class AnalyzeRequest(BaseModel):
+    # Contract v1 declares additionalProperties: false; enforce it so unknown
+    # (possibly large) fields are rejected instead of silently parsed and dropped.
+    model_config = ConfigDict(extra="forbid")
+
     question: str = Field(min_length=QUESTION_MIN_CHARS, max_length=QUESTION_MAX_CHARS)
 
     @field_validator("question")
@@ -77,6 +88,70 @@ def _error(request: Request, status: int, message: str, **extra) -> JSONResponse
                         headers={REQUEST_ID_HEADER: rid})
 
 
+class BodySizeLimit:
+    """ASGI middleware: reject request bodies larger than `max_bytes` with 413.
+
+    Checks Content-Length up front, then reads the body itself (capped) before
+    handing it to the app, so a client cannot bypass the limit by omitting the
+    header or chunking. Bodies for this API are a few KB, so buffering is
+    cheap and memory is bounded by the cap. The limit is read from app.state
+    at request time (set in lifespan) so tests can override it.
+    """
+
+    def __init__(self, app, default_max_bytes: int):
+        self.app = app
+        self.default_max_bytes = default_max_bytes
+
+    async def __call__(self, scope, receive, send):
+        if scope["type"] != "http" or scope.get("method") not in ("POST", "PUT", "PATCH"):
+            return await self.app(scope, receive, send)
+        max_bytes = getattr(scope["app"].state, "max_request_bytes", self.default_max_bytes)
+        headers = dict(scope.get("headers") or [])
+        declared = headers.get(b"content-length")
+        if declared is not None:
+            try:
+                if int(declared) > max_bytes:
+                    return await self._reject(scope, send, max_bytes)
+            except ValueError:
+                pass
+        chunks: list[bytes] = []
+        received = 0
+        while True:
+            message = await receive()
+            if message["type"] != "http.request":
+                break                              # http.disconnect: hand through as-is
+            chunks.append(message.get("body", b""))
+            received += len(chunks[-1])
+            if received > max_bytes:
+                return await self._reject(scope, send, max_bytes)
+            if not message.get("more_body", False):
+                break
+        body = b"".join(chunks)
+        replayed = False
+
+        async def replay():
+            nonlocal replayed
+            if not replayed:
+                replayed = True
+                return {"type": "http.request", "body": body, "more_body": False}
+            return await receive()
+
+        await self.app(scope, replay, send)
+
+    @staticmethod
+    async def _reject(scope, send, max_bytes):
+        rid = dict(scope.get("headers") or []).get(REQUEST_ID_HEADER.lower().encode(), b"").decode() or uuid.uuid4().hex
+        body = json.dumps({"error": "Request body too large.", "request_id": rid, "max_bytes": max_bytes}).encode()
+        await send({"type": "http.response.start", "status": 413, "headers": [
+            (b"content-type", b"application/json"), (b"content-length", str(len(body)).encode()),
+            (REQUEST_ID_HEADER.lower().encode(), rid.encode()),
+        ]})
+        await send({"type": "http.response.body", "body": body})
+
+
+app.add_middleware(BodySizeLimit, default_max_bytes=Settings.from_env().max_request_bytes)
+
+
 @app.middleware("http")
 async def attach_request_id(request: Request, call_next):
     # Echo a caller-supplied id (so the frontend can correlate) or mint one.
@@ -87,10 +162,20 @@ async def attach_request_id(request: Request, call_next):
     return response
 
 
+_VALIDATION_DETAIL_KEYS = ("loc", "msg", "type")
+
+
+def _sanitize_validation_errors(errors) -> list[dict]:
+    # Pydantic's error objects echo the offending `input` (the raw payload) and a
+    # `ctx` that can hold exception objects. Return only location/message/type.
+    return [{k: e.get(k) for k in _VALIDATION_DETAIL_KEYS if k in e} for e in errors]
+
+
 @app.exception_handler(RequestValidationError)
 async def validation_error_handler(request: Request, exc: RequestValidationError):
     # Shape matches contracts/v1/error_response.json: a top-level "error" string.
-    return _error(request, 422, "Invalid request parameters.", detail=jsonable_encoder(exc.errors()))
+    return _error(request, 422, "Invalid request parameters.",
+                  detail=jsonable_encoder(_sanitize_validation_errors(exc.errors())))
 
 
 @app.exception_handler(Exception)

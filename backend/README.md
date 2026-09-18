@@ -24,15 +24,24 @@ Without any configuration the server uses the **offline deterministic stand-in**
 
 ## Docker Containerization
 
+The image contains the application code, pinned runtime dependencies (including the Gemini SDK) and the **7 MB runtime index artifact**. The raw 261 MB metadata is never baked in, so **the index must be built before the image**; the build fails at the `COPY` step if it is missing.
+
 ### Build Image
 ```bash
+venv/bin/python backend/scripts/build_index.py        # produces backend/.cache/runtime_index.json.gz (≈2 s)
 docker build -t intent2data-backend:latest .
 ```
 
 ### Run Container
 ```bash
-docker run -d --name intent2data-api -p 8000:8000 intent2data-backend:latest
+docker run -d --name intent2data-api -p 8000:8000 intent2data-backend:latest                     # offline stand-in
+docker run -d -p 8000:8000 -e INTENT2DATA_LLM_PROVIDER=gemini -e GEMINI_API_KEY=... \
+           -e INTENT2DATA_CORS_ORIGINS=https://your-frontend.example intent2data-backend:latest   # live provider, restricted CORS
 ```
+
+The container sets `INTENT2DATA_REQUIRE_INDEX=1`: if the artifact is missing or corrupt the process logs a `CRITICAL` line naming the expected path and exits non-zero instead of serving 503s. To provision the artifact externally (volume / object store) instead of baking it, mount it and point `INTENT2DATA_INDEX_CACHE` at it, and drop the `COPY backend/.cache/...` line. `HEALTHCHECK` polls `/health` and reports unhealthy unless `ready` is true.
+
+Dependencies: `requirements.txt` = pinned runtime deps (shipped); `requirements-dev.txt` = `pytest`/`httpx` for the test suite.
 
 ## Verification & API Testing
 
@@ -72,7 +81,9 @@ curl -s -o /dev/null -w "%{http_code}\n" -X POST http://localhost:8000/v1/analyz
 | `INTENT2DATA_MODULE_TOP_K` | `5` | modules retrieved per role (the offline-validated setting) |
 | `INTENT2DATA_MAX_CANDIDATES_PER_CALL` | `2000` | hard cap on candidate lines per LLM call; overflow is reported as `candidates_truncated` |
 | `INTENT2DATA_MAX_SELECTIONS_PER_ROLE` | `25` | overflow reported in `rejected.over_limit` |
-| `INTENT2DATA_CORS_ORIGINS` | `*` | comma-separated allowed origins |
+| `INTENT2DATA_CORS_ORIGINS` | `*` | comma-separated allowed origins. `*` is for the demo (no cookies/credentials are used) and logs a warning at startup; set an explicit list in production. |
+| `INTENT2DATA_REQUIRE_INDEX` | `0` (`1` in the container) | `1` makes a missing/corrupt index a fatal startup error instead of a degraded server |
+| `INTENT2DATA_MAX_REQUEST_BYTES` | `65536` | request bodies above this (declared or streamed) are rejected with `413` before parsing; unknown JSON fields are rejected with `422` |
 
 ## Layout
 

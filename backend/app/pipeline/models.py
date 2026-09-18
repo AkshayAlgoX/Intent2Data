@@ -48,7 +48,7 @@ class IntentCoverage(BaseModel):
     unmatched the retrieved modules were ranked on generic words only."""
     terms: list[str]               # concept terms extracted from the intent
     unmatched: list[str]           # terms occurring in no module document
-    coverage: float                # matched / terms (1.0 when there are no terms)
+    coverage: float                # matched / terms (0.0 when the intent has no concept terms at all)
 
 
 class RetrievalSignal(BaseModel):

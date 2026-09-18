@@ -174,9 +174,11 @@ class AnalyzePipeline:
 def _signals(rc: RoleCandidates) -> dict:
     """Deterministic retrieval-stage signals attached to every RoleResult."""
     terms = list(rc.terms)
+    # No concept terms at all (e.g. an intent made only of function words) is
+    # zero coverage, not full coverage: nothing in it could have named a concept.
     coverage = IntentCoverage(
         terms=terms, unmatched=list(rc.unmatched_terms),
-        coverage=round(len(rc.matched_terms) / len(terms), 4) if terms else 1.0,
+        coverage=round(len(rc.matched_terms) / len(terms), 4) if terms else 0.0,
     )
     strength = round(rc.top_score / rc.max_possible_score, 4) if rc.max_possible_score > 0 else 0.0
     retrieval = RetrievalSignal(top_score=rc.top_score, max_possible_score=rc.max_possible_score, strength=min(1.0, strength))

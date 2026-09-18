@@ -21,6 +21,36 @@ drive drives influence influences impact impacts connected linked contribute con
 """.split())
 
 
+_COMPOUND = re.compile(r"\b([A-Za-z]+\d+(?:\.\d+)?|[A-Za-z]+-\d+[A-Za-z0-9]*)\b")
+
+
+def concept_terms(text: object) -> list[tuple[str, list[str]]]:
+    """Concept terms for the coverage report: (surface form, index tokens).
+
+    Scientific compounds such as "PM2.5", "COVID-19" or "HbA1c" are reported
+    in their surface form so the report is readable, while matching uses the
+    same alphanumeric tokens the module index was built from (the index
+    tokenizer splits "PM2.5" into ["pm2", "5"]; the digit-only part is dropped
+    because it carries no concept). Everything else follows content_tokens()."""
+    if not isinstance(text, str):
+        return []
+    out: list[tuple[str, list[str]]] = []
+    seen: set[str] = set()
+    covered: set[str] = set()
+    for m in _COMPOUND.finditer(text):
+        surface = m.group(1).lower()
+        parts = [t for t in tokenize(surface) if len(t) >= 3 and not t.isdigit() and t not in CONTENT_STOPWORDS]
+        if parts and surface not in seen:
+            seen.add(surface); covered.update(tokenize(surface))
+            out.append((surface, parts))
+    for tok in content_tokens(text):
+        if tok in covered or tok in seen:
+            continue
+        seen.add(tok)
+        out.append((tok, [tok]))
+    return out
+
+
 def content_tokens(text: object) -> list[str]:
     """Distinct intent tokens that could plausibly name a concept: not a stop
     word, not purely numeric, at least three characters. Order preserved."""

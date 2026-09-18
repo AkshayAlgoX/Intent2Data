@@ -38,6 +38,8 @@ class Settings:
     build_index_on_startup: bool
     llm_max_retries: int = 1
     llm_retry_backoff_s: float = 0.5
+    require_index: bool = False          # True: a missing/corrupt index is a fatal startup error (containers)
+    max_request_bytes: int = 64 * 1024   # hard cap on request bodies; the API's largest legal body is a few KB
 
     @classmethod
     def from_env(cls) -> "Settings":
@@ -58,4 +60,6 @@ class Settings:
             build_index_on_startup=os.getenv("INTENT2DATA_BUILD_INDEX_ON_STARTUP", "1") not in ("0", "false", "no"),
             llm_max_retries=max(0, _int("INTENT2DATA_LLM_MAX_RETRIES", 1)),
             llm_retry_backoff_s=max(0.0, _float("INTENT2DATA_LLM_RETRY_BACKOFF_S", 0.5)),
+            require_index=os.getenv("INTENT2DATA_REQUIRE_INDEX", "0") in ("1", "true", "yes"),
+            max_request_bytes=max(1024, _int("INTENT2DATA_MAX_REQUEST_BYTES", 64 * 1024)),
         )

@@ -12,7 +12,9 @@ from __future__ import annotations
 import gzip
 import hashlib
 import json
+import os
 import time
+import uuid
 from collections import defaultdict
 from dataclasses import asdict, dataclass
 from pathlib import Path
@@ -20,7 +22,7 @@ from typing import Iterable, Optional
 
 from app.retrieval.bm25 import BM25Index
 from app.retrieval.families import family_key, normalize_code
-from app.retrieval.text import content_tokens
+from app.retrieval.text import concept_terms
 
 INDEX_FORMAT_VERSION = "runtime_index_v1"
 # Fields projected from the raw record. Everything else (raw_block, value
@@ -144,10 +146,17 @@ class RuntimeIndex:
             "module_docs": self._module_docs,
             "family_members": self.family_members,
         }
-        tmp = path.with_suffix(path.suffix + ".tmp")
-        with gzip.open(tmp, "wt", encoding="utf-8") as handle:
-            json.dump(payload, handle, separators=(",", ":"))
-        tmp.replace(path)
+        # Unique temp name so concurrent builders (multiple workers/containers
+        # sharing a cache volume) never write the same file; os.replace is atomic
+        # on POSIX, so readers see either the old or the complete new artifact.
+        tmp = path.with_name(f"{path.name}.{os.getpid()}.{uuid.uuid4().hex[:8]}.tmp")
+        try:
+            with gzip.open(tmp, "wt", encoding="utf-8") as handle:
+                json.dump(payload, handle, separators=(",", ":"))
+            os.replace(tmp, path)
+        finally:
+            if tmp.exists():
+                tmp.unlink(missing_ok=True)
 
     @classmethod
     def load(cls, path: Path) -> "RuntimeIndex":
@@ -188,9 +197,10 @@ class RuntimeIndex:
         """Split an intent's concept terms into those that occur in at least one
         module document (product/section titles + variable labels) and those
         that occur nowhere in the catalog. Deterministic; no model involved."""
-        terms = content_tokens(intent)
-        matched = [t for t in terms if self._bm25.has_token(t)]
-        unmatched = [t for t in terms if not self._bm25.has_token(t)]
+        matched: list[str] = []
+        unmatched: list[str] = []
+        for surface, parts in concept_terms(intent):
+            (matched if any(self._bm25.has_token(p) for p in parts) else unmatched).append(surface)
         return matched, unmatched
 
     def max_possible_score(self, intent: str) -> float:

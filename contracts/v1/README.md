@@ -34,7 +34,7 @@ pipeline on the synthetic test catalog with a scripted client.
 | `candidates` | `{retrieved, family_expanded, total, truncated}` — variables inside the retrieved modules, cross-wave siblings added structurally, what the LLM was shown, whether the per-call cap cut it |
 | `selections[]` | grounded variables only (see below) |
 | `rejected` | `{out_of_context, hallucinated, parse_errors, over_limit}` — everything the model returned that was **not** forwarded |
-| `intent_coverage` | `{terms, unmatched, coverage}` — which of the intent's concept terms occur anywhere in the module vocabulary (titles + labels). Deterministic, model-independent. An unmatched term could not have influenced retrieval. (additive) |
+| `intent_coverage` | `{terms, unmatched, coverage}` — which of the intent's concept terms occur anywhere in the module vocabulary (titles + labels). Terms are shown in surface form (`pm2.5`, `covid-19`); pure numbers are not concept terms. `coverage` is 0.0 when there are no concept terms at all. Deterministic, model-independent. An unmatched term could not have influenced retrieval. (additive) |
 | `retrieval` | `{top_score, max_possible_score, strength}` — best module's BM25 score and its saturation bound for this intent; `strength` = ratio in 0..1. **Descriptive and uncalibrated**: good and bad retrievals overlap around 0.2–0.3 on HRS, so no threshold or limitation is derived from it; compare roles within one response only. (additive) |
 
 ### `selections[]`
@@ -48,14 +48,15 @@ pipeline on the synthetic test catalog with a scripted client.
 
 ### `limitations[].code`
 `no_roles`, `intent_parse_warning`, `empty_retrieval`, `no_grounded_selection`, `role_failed`,
-`candidates_truncated`, `hallucinated_ids_dropped`, `ungrounded_ids_dropped`, `evidence_not_verbatim`, `concept_terms_unmatched` (intent term(s) occur in no module document; says whether retrieval fell back to generic words only), `offline_llm`.
+`candidates_truncated`, `hallucinated_ids_dropped`, `ungrounded_ids_dropped`, `evidence_not_verbatim`, `concept_terms_unmatched` (intent term(s) occur in no module document; says whether retrieval fell back to generic words only), `no_concept_terms` (the intent has no concept term at all — only function words/numbers — so `coverage` is 0.0), `offline_llm`.
 
 ## Errors — `error_response.json`
 Always `{"error": string, "request_id": string, ...}`.
 
 | Status | When | Extra fields |
 |---|---|---|
-| 422 | request validation; or the intent stage returned unparseable output | `detail` / `stage`, `retryable=false` |
+| 413 | request body larger than `INTENT2DATA_MAX_REQUEST_BYTES` (default 64 KiB), declared or streamed | `max_bytes` |
+| 422 | request validation (including unknown fields — `additionalProperties: false` is enforced); or the intent stage returned unparseable output. `detail[]` items carry only `loc`, `msg`, `type` — the offending input is never echoed. | `detail` / `stage`, `retryable=false` |
 | 502 | the LLM provider failed on the intent call | `stage`, `retryable=true` |
 | 503 | runtime index not loaded | `detail` |
 | 500 | anything else (opaque; details are in the server log under the request id) | — |
