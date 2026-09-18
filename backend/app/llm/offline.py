@@ -11,8 +11,9 @@ produces can be mistaken for measured model behaviour.
 import json
 import re
 import time
+from collections import deque
 
-from app.llm.client import LLMResponse
+from app.llm.client import CALL_HISTORY, LLMResponse
 from app.retrieval.text import tokenize
 
 MODEL_NAME = "offline-lexical"
@@ -39,15 +40,23 @@ def _clean(text: str) -> str:
 
 
 class OfflineLexicalLLMClient:
-    def __init__(self, max_selections: int = 10):
+    def __init__(self, max_selections: int = 10, history: int = 0):
         self.max_selections = max_selections
-        self.calls: list[dict] = []
+        # Production default keeps no prompt text at all (history=0): only a
+        # counter and a bounded ring of small call summaries.
+        self.call_count = 0
+        self.calls: deque = deque(maxlen=history if history > 0 else CALL_HISTORY)
+        self._keep_prompts = history > 0
 
     # The orchestrator tags every prompt with a task line so the stand-in knows
     # which fake to produce; a real provider ignores the tag.
     def generate_json(self, system: str, prompt: str, schema: dict) -> LLMResponse:
         start = time.perf_counter()
-        self.calls.append({"system": system, "prompt": prompt, "schema": schema})
+        self.call_count += 1
+        if self._keep_prompts:
+            self.calls.append({"system": system, "prompt": prompt, "schema": schema})
+        else:
+            self.calls.append({"task": prompt.split("\n", 1)[0], "prompt_chars": len(prompt)})
         if prompt.startswith("TASK: intent"):
             text = self._intent(prompt)
         else:

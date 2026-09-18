@@ -23,12 +23,13 @@ Population: 20 intent-annotated OADD-Bench questions (HRS), 621 gold variable la
 | Single-query BM25 Recall@5R 0.184 → role-aware BM25 0.304 (pre-hackathon, macro-averaged, benchmark temporal filter applied) | [MEASURED OFFLINE] |
 | Module top-5 per role: 205/621 gold present in candidates (0.330) | [STRUCTURAL REACHABILITY] |
 | + cross-wave family expansion (the runtime's configuration): 343/621 (0.552) | [STRUCTURAL REACHABILITY] |
-| Role sharding: 0 reachable gold lost, −81 % candidates per call | [STRUCTURAL REACHABILITY] |
-| Pre-hackathon projection: 0.698 reachability × assumed 0.85 / 0.93 extraction efficiency = 0.593 / 0.649 | [SIMULATION / PROJECTION] — **not a measurement** |
+| Role sharding: 0 reachable gold lost, −81 % candidates per call (reachability only; says nothing about live selection quality) | [STRUCTURAL REACHABILITY] |
+
+**Not evidence — listed only so nobody mistakes them for it.** Pre-hackathon *projections* of 0.593 and 0.649 exist in old material. They are `0.698 reachability × an assumed 0.85 / 0.93 extraction efficiency` [SIMULATION / PROJECTION]: no language model was run to obtain them, and they must not be read, quoted or plotted as recall.
 
 ## 5. Current Limitations
 - Module reachability is a hard ceiling: if the module is not retrieved, the variable cannot be found. Pre-hackathon macro reachability was about 0.698 [STRUCTURAL REACHABILITY]; the runtime's configuration reaches 0.552 micro on the same questions (different metric; see `SCIENTIFIC_CLAIMS.md` §1).
-- **Live LLM selection has not been measured** [LIVE RESULT: none]. Five attempts were blocked by provider quota; Exp24 is staged.
+- **Live LLM selection has not been measured.** Six live attempts: five blocked by provider quota/outages; Exp25 completed **one** generation call (1 of 7) before a `503` abort — a feasibility observation, not an accuracy result [LIVE RESULT: n = 1 call]. Exp24 and the rest of Exp25 are staged.
 - Wave-family expansion is demonstrated on HRS only; it is a blueprint for other longitudinal datasets, not a demonstrated general method.
 - Intent2Data maps concepts to variables; it does not perform or validate causal inference.
 

@@ -88,7 +88,7 @@ They may be described only as "projected recall under an assumed 85 %/93 % extra
 
 ## 3. LIVE RESULTS
 
-**Status: not yet measured. No live LLM extraction accuracy of any kind may be claimed.**
+**Status: one successful generation call exists (Exp25, call 1 of 7); the pilot is incomplete. No live LLM extraction accuracy of any kind may be claimed.**
 
 | Attempt | Outcome |
 |---|---|
@@ -97,9 +97,16 @@ They may be described only as "projected recall under an assumed 85 %/93 % extra
 | `exp22` (14-call micro-paired A/B) | aborted on call 1 — `429/503` |
 | `exp23` (payload feasibility ladder from 25k tokens) | aborted at the first rung — `429/503` |
 | `exp24` (14-call staged, controlled single-question pilot; frozen) | aborted on call 1 — `429 RESOURCE_EXHAUSTED`, free-tier limit of 20 requests/day already spent |
+| `exp25` (7-call sharded-only feasibility pilot on one question, `oadd-hrs-14632-q2`; frozen) | **call 1 succeeded, call 2 aborted — `503 UNAVAILABLE`; 1 of 7 calls completed, `all_calls_completed: false`** |
 
-Total successful live generation calls across all experiments: **0**.
-Exp24 is a *staged controlled pilot*: n = 14 calls on one question. Even when it runs, it can only indicate whether selection behaviour differs between the union and sharded contexts on that question; it cannot establish benchmark-level extraction quality.
+Total successful live generation calls across all experiments: **1** (Exp25, role `outcome`).
+
+What that single call showed — **[LIVE RESULT — n = 1 call, one role, one question; a feasibility observation, not an accuracy estimate]**:
+168,612 input tokens accepted by the provider; 28.5 s latency; structured JSON parsed; 13 variables selected, all 13 inside the shown candidate set (0 hallucinated, 0 out-of-context); 5 of the 10 gold variables accessible to that role were among them.
+Permitted reading: a 169k-token sharded payload is *executable* on the observed tier, and the model returned grounded codes on that call.
+Forbidden readings: "Exp25 validated the sharded architecture", "7-call validation", any recall/precision figure derived from one call, or any union-vs-sharded comparison (the union arm has never executed).
+
+Exp24 is a *staged controlled pilot*: n = 14 calls on one question. Exp25 is a *feasibility pilot*: n = 7 calls on one question, of which 6 have not run. Even complete, either can only indicate whether selection behaviour differs between contexts on that question; neither can establish benchmark-level extraction quality.
 The runtime's default client is a deterministic lexical stand-in; every response it produces carries `llm.live = false` and an `offline_llm` limitation so that it cannot be mistaken for model output.
 
 ---
@@ -122,6 +129,8 @@ What it is: HRS asks the same item in every biennial wave under a wave-prefixed 
 
 What was shown [STRUCTURAL REACHABILITY]: on the 20-question population, expansion raises reachable gold from 205 to 343 of 621 at a 1.5× candidate cost, whereas retrieving twice as many modules reaches 341 at a 1.8× cost (`exp12`, `exp17`). 537 of the 621 gold labels are members of a multi-wave series, which is why the effect is large **on this benchmark**.
 
+Implementation scope: the family key in `backend/app/retrieval/families.py` is **HRS-specific by construction** — it relies on the HRS wave-prefix letter table (`WAVE_PREFIX_YEAR`: H=2002 … S=2022), the `core`/`exit` product families and the cognition-file code pattern. Records that do not match these patterns fall back to singleton families (no expansion; the pipeline still runs). This is a deliberate configuration for the target dataset, not a general longitudinal-harmonisation engine.
+
 Scope of the claim: this leverages the **longitudinal harmonisation structure of HRS metadata** and is **demonstrated on HRS only**. It is offered as a **blueprint for structured longitudinal datasets** whose codebooks carry repeated-item structure (panel surveys with wave-coded variables). No claim is made that it transfers to arbitrary datasets, to cross-sectional data, or to codebooks without harmonised item labels, and no such transfer has been measured.
 
 ---
@@ -140,8 +149,8 @@ It **does not perform, test, or validate causal inference**. The roles "exposure
 |---|---|
 | **Runtime pipeline functionality** | Implemented and tested offline: `POST /v1/analyze` runs intent → module BM25 retrieval → wave-family expansion → per-role selection call → deterministic grounding validation → contract v1 response. 77 tests pass with a synthetic catalog and scripted/offline clients. Exercised on the real 122,296-variable index. |
 | **Offline retrieval evidence** | The candidate construction the runtime implements reaches 343/621 gold on the 20-question population [STRUCTURAL REACHABILITY]. The three canonical demo questions retrieve the modules the demo docs predicted for Q2 and Q3; for Q1 the demo doc names RAND variables (`RAEDUC`) that are **not in this catalog** — see the correction note in `docs/CANONICAL_DEMO_VALIDATION.md`. |
-| **Live LLM evaluation** | Not started successfully: 0 live generation calls have completed (§3). No live selection accuracy exists. Exp24 is staged for the next quota window. |
-| **Infrastructure / demo readiness** | API hardened (validation, request ids, CORS, error envelope, 503/502 semantics); provider-agnostic `LLMClient` boundary; no live provider adapter is wired; the free-tier quota (20 requests/day) is smaller than one full demo run of three questions (≈ 9 calls each). A demo today runs on the offline stand-in and must be presented as such. |
+| **Live LLM evaluation** | One successful generation call in total (Exp25 call 1/7; pilot aborted on call 2 with `503`). It is a feasibility observation, not a result (§3). No live selection accuracy exists. Exp24 and the remainder of Exp25 are staged for the next quota window. |
+| **Infrastructure / demo readiness** | API hardened (validation, request ids, CORS, error envelope, 503/502 semantics); provider-agnostic `LLMClient` boundary; Gemini adapter wired behind explicit configuration (default remains the offline stand-in); container bakes the 7 MB index artifact and fails fast without it; the free-tier quota (20 requests/day) is smaller than one full demo run of three questions (≈ 9 calls each). A demo today runs on the offline stand-in and must be presented as such. |
 
 ## Internal claim table (quick reference)
 

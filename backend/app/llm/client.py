@@ -1,5 +1,11 @@
+from collections import deque
 from dataclasses import dataclass, field
 from typing import Optional, Protocol
+
+# How many recent calls the test/offline clients remember. Bounded so a
+# long-running process never accumulates prompts (a single request can carry
+# several hundred KB of candidate text per role).
+CALL_HISTORY = 32
 
 
 @dataclass(frozen=True)
@@ -31,12 +37,14 @@ class StaticLLMClient:
     applies" answer rather than a failure).
     """
 
-    def __init__(self, responses: Optional[list] = None, fallback: str = '{"selections": []}'):
+    def __init__(self, responses: Optional[list] = None, fallback: str = '{"selections": []}', history: int = CALL_HISTORY):
         self._responses = list(responses or [])
         self._fallback = fallback
-        self.calls: list[dict] = []
+        self.calls: deque = deque(maxlen=history)   # most recent calls only (test observability)
+        self.call_count = 0
 
     def generate_json(self, system: str, prompt: str, schema: dict) -> LLMResponse:
+        self.call_count += 1
         self.calls.append({"system": system, "prompt": prompt, "schema": schema})
         text = self._responses.pop(0) if self._responses else self._fallback
         return LLMResponse(text=text, model="static")

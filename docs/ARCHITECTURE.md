@@ -45,5 +45,10 @@ on the real codebook, through every pipeline stage. With `llm.live = false` the 
 lexical stand-in; the pipeline runs end to end as *software*, but **end-to-end selection accuracy is unmeasured**
 [LIVE RESULT: none] (see `docs/SCIENTIFIC_CLAIMS.md` §3 and `evaluation/results/EXP24_FINAL_REPORT.md`).
 
+**Retrieval design decisions (verified 2026-09-18).**
+* *Module documents are titles + variable labels only; `question_text` is deliberately excluded.* This is the representation the offline reachability numbers were measured on. Adding question text would multiply module-document text 4.4× (4.1 M → 22 M chars; even a distinct-token vocabulary adds +54 %), change BM25 statistics and invalidate every measured retrieval figure. The demonstrated blind spot is not "missing vocabulary" but *intent phrasing*: the same concept ranks 1st or >300th depending on whether the intent uses codebook words. The runtime therefore exposes `intent_coverage` (which intent terms exist in the module vocabulary at all) instead of widening the index.
+* *Tokenisation splits on non-alphanumerics* (`PM2.5` → `pm2`, `5`; `COVID-19` → `covid`, `19`), matching the validated experiments. Retrieval still uses every token; the coverage report drops pure numbers and shows scientific compounds in their surface form (`pm2.5`, `covid-19`) so it is readable without changing what is indexed.
+* *Wave families are HRS-specific* (`WAVE_PREFIX_YEAR`, `core`/`exit`/`cognition` patterns); other records become singleton families and simply get no expansion.
+
 Evaluation scripts (`evaluation/`) are the conceptual source for stages 2–3 and must stay outside the runtime;
 `backend/tests/test_no_benchmark_leakage.py` enforces that.

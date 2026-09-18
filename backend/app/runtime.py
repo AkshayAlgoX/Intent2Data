@@ -45,7 +45,24 @@ class RuntimeState:
         return AnalyzePipeline(self.index, self.llm, cfg)
 
 
+class RuntimeNotReady(RuntimeError):
+    """Raised at startup when INTENT2DATA_REQUIRE_INDEX=1 and the runtime cannot serve."""
+
+
 def load_runtime(settings: Settings) -> RuntimeState:
+    state = _load_runtime(settings)
+    if settings.require_index and not state.ready:
+        # Deliberate, loud failure for deployments: the process exits with a
+        # clear message instead of serving 503s from a "running" container.
+        msg = (f"runtime not ready and INTENT2DATA_REQUIRE_INDEX=1: {state.index_error}. "
+               f"Provide the index artifact at {settings.index_cache_path} (build it with "
+               f"backend/scripts/build_index.py) or set INTENT2DATA_METADATA_PATH to the raw metadata.")
+        logger.critical(msg)
+        raise RuntimeNotReady(msg)
+    return state
+
+
+def _load_runtime(settings: Settings) -> RuntimeState:
     state = RuntimeState(settings=settings)
     try:
         state.llm = build_llm_client(settings.llm_provider, settings.llm_model)
@@ -57,7 +74,8 @@ def load_runtime(settings: Settings) -> RuntimeState:
         state.index_error = "index build disabled (INTENT2DATA_BUILD_INDEX_ON_STARTUP=0)"
         return state
     if not settings.metadata_path.exists() and not settings.index_cache_path.exists():
-        state.index_error = f"metadata not found: {settings.metadata_path}"
+        state.index_error = (f"no runtime index available: cache {settings.index_cache_path} not found and "
+                             f"metadata not found: {settings.metadata_path}")
         logger.error(state.index_error)
         return state
     t = time.perf_counter()

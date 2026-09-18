@@ -90,6 +90,9 @@ def derive_limitations(roles: list[RoleResult], intent_errors: list[str], llm_li
         elif r.status == "failed":
             lims.append(Limitation(code="role_failed", role=r.role, message=r.error or "role stage failed"))
         cov = r.intent_coverage
+        if cov and not cov.terms:
+            lims.append(Limitation(code="no_concept_terms", role=r.role,
+                                   message=f"The '{r.role}' intent contains no concept term (only function words or numbers); any retrieved modules were ranked on generic words."))
         if cov and cov.unmatched:
             all_gone = cov.coverage == 0.0
             lims.append(Limitation(

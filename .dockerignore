@@ -15,3 +15,8 @@ evaluation/
 contracts/
 validate_demo.py
 *.md
+backend/.cache/*.tmp*
+backend/tests/
+backend/scripts/
+backend/redteam*.py
+backend/dump_keys.py

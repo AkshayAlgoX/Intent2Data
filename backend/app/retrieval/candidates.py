@@ -10,7 +10,7 @@ never from an external answer key.
 from dataclasses import dataclass, field
 
 from app.retrieval.index import ModuleHit, RuntimeIndex
-from app.retrieval.text import content_tokens
+from app.retrieval.text import concept_terms
 
 
 @dataclass(frozen=True)
@@ -50,7 +50,7 @@ def build_role_candidates(index: RuntimeIndex, role: str, intent: str, top_k: in
     if not intent or not intent.strip():
         return result
     result.matched_terms, result.unmatched_terms = index.intent_coverage(intent)
-    result.terms = [t for t in content_tokens(intent)]
+    result.terms = [surface for surface, _ in concept_terms(intent)]
     result.max_possible_score = round(index.max_possible_score(intent), 6)
     result.modules = index.search_modules(intent, top_k)
     if not result.modules:
